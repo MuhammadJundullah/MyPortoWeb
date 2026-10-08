@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -17,10 +17,16 @@ export default function ManageEducations() {
   const [image, setImage] = useState<File | null>(null);
   const [editing, setEditing] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const { toast, showToast } = useToast();
   async function refresh() { const response = await fetch("/api/educations"); const result = await response.json(); if (response.ok) setItems(result.data); }
   useEffect(() => { refresh().catch(error => showToast(String(error), "error")); }, []);
-  function edit(item: Education) { setEditing(item.id); setForm({ school: item.school, major: item.major, date: item.date }); setImage(null); }
+  function edit(item: Education) {
+    setEditing(item.id);
+    setForm({ school: item.school, major: item.major, date: item.date });
+    setImage(null);
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
   function reset() { setEditing(null); setForm(blank); setImage(null); }
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true);
@@ -34,7 +40,7 @@ export default function ManageEducations() {
 
   return <div className="mx-auto max-w-6xl px-4 py-8 dark:text-white">
     <h1 className="text-3xl font-bold">Manage Educations</h1><p className="mt-2 text-gray-500">Tambah dan kelola pendidikan yang tampil pada portofoliomu.</p>
-    <form onSubmit={submit} className="my-8 grid gap-4 rounded-xl border bg-white p-6 text-gray-900 shadow-sm md:grid-cols-2">
+    <form ref={formRef} onSubmit={submit} className="my-8 grid scroll-mt-8 gap-4 rounded-xl border bg-white p-6 text-gray-900 shadow-sm md:grid-cols-2">
       <h2 className="text-xl font-semibold md:col-span-2">{editing ? "Edit pendidikan" : "Tambah pendidikan"}</h2>
       <Input required placeholder="Nama sekolah / universitas" value={form.school} onChange={e => setForm({ ...form, school: e.target.value })} />
       <Input required placeholder="Jurusan" value={form.major} onChange={e => setForm({ ...form, major: e.target.value })} />
@@ -42,7 +48,7 @@ export default function ManageEducations() {
       <Input type="file" accept="image/*" required={!editing} onChange={e => setImage(e.target.files?.[0] || null)} />
       <div className="flex gap-2 md:col-span-2"><Button disabled={busy}>{busy ? "Menyimpan…" : editing ? "Simpan perubahan" : "Tambah pendidikan"}</Button>{editing && <Button type="button" variant="outline" onClick={reset}>Batal</Button>}</div>
     </form>
-    <div className="grid gap-4 md:grid-cols-2">{items.map(item => <article key={item.id} className="flex items-center gap-4 rounded-xl border bg-white p-4 text-gray-900"><Image src={item.name} alt="Logo institusi" width={64} height={64} unoptimized className="h-16 w-16 rounded-full object-contain" /><div className="min-w-0 flex-1"><h2 className="font-semibold">{item.school}</h2><p>{item.major} · {item.date}</p></div><Button variant="outline" onClick={() => edit(item)}>Edit</Button><Button variant="destructive" onClick={() => remove(item.id)}>Hapus</Button></article>)}</div>
+    <div className="grid gap-4 md:grid-cols-2">{items.map(item => <article key={item.id} className="flex items-center gap-4 rounded-xl border bg-white p-4 text-gray-900"><Image src={item.name} alt="Logo institusi" width={64} height={64} unoptimized className="h-16 w-16 rounded-full object-contain" /><div className="min-w-0 flex-1"><h2 className="font-semibold">{item.school}</h2><p>{item.major} · {item.date}</p></div><Button type="button" variant="outline" onClick={() => edit(item)}>Edit</Button><Button type="button" variant="destructive" onClick={() => remove(item.id)}>Hapus</Button></article>)}</div>
     {toast && <Toast message={toast.message} type={toast.type} />}
   </div>;
 }

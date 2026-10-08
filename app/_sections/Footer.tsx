@@ -5,10 +5,10 @@ const Footer = ({ name = "Sayid", instagram, twitter }: { name?: string; instagr
   return (
     <section id="Footer">
       <footer>
-        <div className="flex justify-between items-center md:mx-auto mx-5 max-w-6xl sm:space-y-3 sm:py-5 py-3">
+        <div className="flex justify-between items-center md:mx-auto mx-5 max-w-6xl sm:space-y-3 sm:py-5 py-3 border-t">
           <div>
             <p className="text-sm text-gray-400 dark:text-white py-2">
-              Last updated on Sept 30, 2025
+              Last updated on Oct 8, 2026
             </p>
             <div>
               <p className="sm:text-xl text-3xs text-gray-900 dark:text-white">

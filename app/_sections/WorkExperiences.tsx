@@ -16,7 +16,7 @@ export default function WorkExperiences({ data }: WorkExperiencesProps) {
       <div className="flex flex-col max-w-6xl sm:mx-auto mx-5 sm:mb-20">
         <span className="text-3xl flex items-center">
           <span className="shrink-0 pe-4">
-            <h1 className="sm:text-5xl text-2xl font-mono font-semi text-gray-800 dark:text-white my-10">
+            <h1 className="sm:text-5xl text-2xl font-mono font-semibold text-gray-800 dark:text-white my-10">
               My Work Experiences
             </h1>
           </span>

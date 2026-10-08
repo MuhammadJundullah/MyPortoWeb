@@ -25,6 +25,6 @@ export async function RenderPortfolio({ ownerId, username }: { ownerId: number |
     <Projects data={projects.map((project) => ({ ...project, url: project.url || "", photo: project.photo, tech: project.tech || "", site: project.site || "", desc: project.desc || "", slug: "", categoryslug: "", createdAt: project.createdAt?.toISOString() || "", updatedAt: project.updatedAt?.toISOString() || "", status: project.status === "published" ? "published" : "archived" } as ProjectsType))} username={username} />
     <Certificates data={certificates.map((certificate) => ({ ...certificate, id: String(certificate.id), desc: certificate.desc || "", site: certificate.site || "", photo: certificate.photo || "", status: certificate.status === "published" ? "published" : "archived", createdAt: certificate.createdAt?.toISOString() || "", updatedAt: certificate.updatedAt?.toISOString() || "" } as CertificatesType))} />
     <Education data={educations} />
-    <div className="sm:w-full border-t sm:mx-0 mx-5"><Footer name={profile?.name || "Sayid"} instagram={profile?.instagram || undefined} twitter={profile?.twitter || undefined} /></div>
+    <div className="sm:w-full sm:mx-0 mx-5"><Footer name={profile?.name || "Sayid"} instagram={profile?.instagram || undefined} twitter={profile?.twitter || undefined} /></div>
   </>;
 }
