@@ -42,7 +42,7 @@ export default function Projects({ data, username }: Props) {
               return (
                 <div key={i}>
                   <Link
-                    href={`/project/web-development/${project.id}${username ? `?username=${encodeURIComponent(username)}` : ""}`}
+                    href={`/project/${project.id}${username ? `?username=${encodeURIComponent(username)}` : ""}`}
                     className="group block">
                     <div className="group-hover:scale-105 transition-all duration-300">
                       <CustomAnimatedContent

@@ -198,17 +198,17 @@ export async function generateMetadata({ params, searchParams }: {
     item.desc.replace(/<[^>]*>/g, "").substring(0, 160) + "...";
 
   return {
-    title: `${item.judul} - Web Development Project`,
+    title: `${item.judul} - Project`,
     description: cleanDescription,
     openGraph: {
-      title: `${item.judul} - Web Development Project`,
+      title: `${item.judul} - Project`,
       description: cleanDescription,
       images: typeof item.photo === "string" && item.photo ? [{ url: item.photo }] : [],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: `${item.judul} - Web Development Project`,
+      title: `${item.judul} - Project`,
       description: cleanDescription,
       images: typeof item.photo === "string" && item.photo ? [item.photo] : [],
     },

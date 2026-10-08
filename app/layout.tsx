@@ -13,7 +13,8 @@ const fontMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sayid's Portofolio",
+  title: "MyPorto — Portofolio Praktis dan Mudah Dibagikan",
+  description: "Buat portofolio online sederhana untuk menampilkan proyek, pengalaman, dan perjalanan profesionalmu. Bagikan dengan satu tautan.",
   verification : {
     google: "7feoSet_bBh3tPsyrc3rt6_PfSU1keiHDQiqheFNHso",
   }
@@ -25,11 +26,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="id">
       <body
         className={`${fontSans.variable} ${fontMono.variable} antialiased text-gray-900 dark:bg-gray-800`}>
-        <div className="min-h-screen flex flex-col mx-auto max-w-6xl">
-          <div className="flex-1 flex flex-col items-center justify-center pb-10">
+        <div className="min-h-screen flex flex-col">
+          <div className="flex-1 flex w-full flex-col">
             {children}
           </div>
         </div>

@@ -42,7 +42,7 @@ export async function PUT(req: NextRequest) {
     const photo = form.get("photo");
     const deletePhoto = form.get("deletePhoto") === "true";
     let photoUrl = current.photo;
-    if (photo instanceof File && photo.size) photoUrl = await uploadToCloudinary(photo, "/portofolio/profile");
+    if (photo instanceof File && photo.size) photoUrl = await uploadToCloudinary(photo, "myporto/profile");
     else if (deletePhoto) photoUrl = null;
     const updated = await prisma.users.update({
       where: { id: ownerId },

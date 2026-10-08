@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     }
 
     const photo = formData.get("photo") as File;
-    const photoUrl = await uploadToCloudinary(photo, "/portofolio/projects");
+    const photoUrl = await uploadToCloudinary(photo, "myporto/projects");
 
     await prisma.projects.create({
       data: {
@@ -169,7 +169,7 @@ export async function PUT(req: NextRequest) {
       if (newPhotoFile) {
         finalPhotoUrl = await uploadToCloudinary(
           newPhotoFile,
-          "/portofolio/projects"
+          "myporto/projects"
         );
       } else if (deletePhotoExplicitly) {
         finalPhotoUrl = null;

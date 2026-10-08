@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     const image = form.get("image");
     let imageUrl = input.data.name || "";
     if (image instanceof File && image.size) {
-      const uploaded = await uploadToCloudinary(image, "/portofolio/educations");
+      const uploaded = await uploadToCloudinary(image, "myporto/educations");
       if (!uploaded) return handleError(null, "Gagal mengunggah logo pendidikan.", 400);
       imageUrl = uploaded;
     }
@@ -50,7 +50,7 @@ export async function PUT(req: NextRequest) {
     const image = form.get("image");
     let imageUrl = input.data.name || existing.name;
     if (image instanceof File && image.size) {
-      const uploaded = await uploadToCloudinary(image, "/portofolio/educations");
+      const uploaded = await uploadToCloudinary(image, "myporto/educations");
       if (!uploaded) return handleError(null, "Gagal mengunggah logo pendidikan.", 400);
       imageUrl = uploaded;
     }

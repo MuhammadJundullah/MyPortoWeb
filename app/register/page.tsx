@@ -19,7 +19,8 @@ export default function RegisterPage() {
     router.push(`/login?registered=${encodeURIComponent(String(form.get("username")))}`);
   }
 
-  return <main className="w-full max-w-md px-6 py-16">
+  return <main className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-6 py-16">
+    <Link href="/" className="mb-3 self-start text-sm font-medium text-gray-600 transition hover:text-black dark:text-gray-300 dark:hover:text-white">← Kembali ke beranda</Link>
     <h1 className="text-3xl font-bold dark:text-white">Buat akun MyPorto</h1>
     <p className="mt-2 text-gray-600 dark:text-gray-300">Buat portfolio pribadi dengan alamat username kamu.</p>
     <form onSubmit={submit} className="mt-8 space-y-4">

@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
 
       const uploadResult = await new Promise<any>((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
-          { folder: "/portofolio/certificates" },
+          { folder: "myporto/certificates" },
           (error, result) => {
             if (error) reject(error);
             else resolve(result);

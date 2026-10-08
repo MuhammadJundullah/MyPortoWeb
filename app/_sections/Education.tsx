@@ -22,7 +22,7 @@ export default function Educations({ data }: EducationsProps) {
           </span>
           <span className="h-px flex-1 bg-gray-300"></span>
         </span>
-        <div className="my-20 sm:mx-100 mx-10">
+        <div className="my-20 sm:mx-auto mx-10">
           {educations.length === 0 ? (
             <p className="text-gray-500 dark:text-gray-300">No education history to display yet.</p>
           ) : (

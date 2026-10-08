@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     }
 
     const image = formData.get("image") as File;
-    const imageUrl = await uploadToCloudinary(image, "/portofolio/techstacks");
+    const imageUrl = await uploadToCloudinary(image, "myporto/techstacks");
 
     if (!imageUrl) {
       return handleError(null, "Image upload failed.", 400);
@@ -171,7 +171,7 @@ export async function PUT(req: NextRequest) {
     if (newImageFile) {
       finalImageUrl = await uploadToCloudinary(
         newImageFile,
-        "/portofolio/techstacks"
+        "myporto/techstacks"
       );
     } else if (deletePhotoExplicitly) {
       finalImageUrl = null;
