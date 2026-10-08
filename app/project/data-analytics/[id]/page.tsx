@@ -4,13 +4,12 @@ import { fetchDataFromAPI } from "@/lib/actions";
 import { FaArrowLeft, FaGithub } from "react-icons/fa";
 import { notFound } from "next/navigation";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
+export default async function Page({ params, searchParams }: {
+  params: Promise<{ id: string }>; searchParams: Promise<{ username?: string }>;
 }) {
   const { id } = await params;
-  const res = await fetchDataFromAPI(id);
+  const { username } = await searchParams;
+  const res = await fetchDataFromAPI(id, username);
   const data = res.data;
 
   if (
@@ -32,7 +31,7 @@ export default async function Page({
         {/* Navigation */}
         <div className="mb-8">
           <Link
-            href="/#projects"
+            href={username ? "/" + username + "#projects" : "/#projects"}
             className="inline-flex items-center gap-3 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 group">
             <FaArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="font-medium">Back to Projects</span>
@@ -143,17 +142,16 @@ export default async function Page({
 
 import type { Metadata } from "next";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>;
+export async function generateMetadata({ params, searchParams }: {
+  params: Promise<{ id: string }>; searchParams: Promise<{ username?: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
+  const { username } = await searchParams;
   const { id } = resolvedParams;
 
-  const data = await fetchDataFromAPI(id);
+  const data = await fetchDataFromAPI(id, username);
 
-  if (!data || data.length === 0) {
+  if (!data.data.length) {
     return {
       title: "Project Not Found",
       description: "The requested project could not be found.",

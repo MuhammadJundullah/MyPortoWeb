@@ -210,7 +210,7 @@ const ManageProjects = () => {
               <CardHeader>
                 <CardTitle>{project.judul}</CardTitle>
                 <CardDescription className="dark:text-white">
-                  {project.category}
+                  {project.tech || "Proyek"}
                 </CardDescription>
               </CardHeader>
 

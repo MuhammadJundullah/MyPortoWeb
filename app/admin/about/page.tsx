@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { VscRefresh } from "react-icons/vsc";
 import { SquarePen, Save, X } from "lucide-react";
 import { Input } from "@/components/ui/input"; // Import komponen Input
+import ProfileSettings from "./ProfileSettings";
 
 interface About {
   id: string;
@@ -119,6 +120,7 @@ const ManageAbout = () => {
 
   return (
     <div className="mx-auto sm:px-4 max-w-6xl">
+      <ProfileSettings />
       <div className="sm:my-10">
         <h1 className="text-3xl dark:text-white font-bold">Manage About</h1>
         <p className="text-gray-500 dark:text-white font-medium">

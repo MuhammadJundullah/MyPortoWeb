@@ -5,7 +5,7 @@ import { FaLinkedin } from "react-icons/fa";
 import { PiGithubLogoLight } from "react-icons/pi";
 import { useEffect, useState } from "react";
 
-const HeaderScroll = () => {
+const HeaderScroll = ({ name, linkedin, github }: { name: string; linkedin?: string | null; github?: string | null }) => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -37,23 +37,23 @@ const HeaderScroll = () => {
       `}>
       <a href="#hello">
         {" "}
-        <p className="sm:tracking-[.30em]">Sayid&apos;s Portfolio</p>
+        <p className="sm:tracking-[.30em]">{name}&apos;s Portfolio</p>
       </a>
       <div className="flex flex-row sm:space-x-10 space-x-4">
-        <Link
-          href={"https://linkedin.com/in/sayidm"}
+        {linkedin && <Link
+          href={linkedin}
           target="_blank"
           rel="noopener noreferrer"
           className="transition-colors">
           <FaLinkedin />
-        </Link>
-        <Link
-          href={"https://github.com/MuhammadJundullah"}
+        </Link>}
+        {github && <Link
+          href={github}
           target="_blank"
           rel="noopener noreferrer"
           className="text-whitetransition-colors">
           <PiGithubLogoLight />
-        </Link>
+        </Link>}
       </div>
     </div>
   );

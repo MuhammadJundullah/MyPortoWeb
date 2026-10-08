@@ -5,9 +5,11 @@ import { aboutType } from "@/lib/type";
 
 interface props {
   data: aboutType;
+  email: string;
+  phone: string;
 }
 
-const About = ({ data }: props) => {
+const About = ({ data, email, phone }: props) => {
   return (
     <section id="about">
       <div className="flex flex-col max-w-6xl mb-20 sm:mx-auto mx-5 font-thin sm:text-center text-gray-800">
@@ -39,20 +41,19 @@ const About = ({ data }: props) => {
                 <br />
                 <br />
                 <Link
-                  href="mailto:sayidmuhammad15@gmail.com"
+                  href={`mailto:${email}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-900 dark:text-white hover:underline">
                   Feel free to reach out via email
-                </Link>{" "}
-                or{" "}
-                <Link
-                  href="https://api.whatsapp.com/send/?phone=%2B6283853291755&text&type=phone_number&app_absent=0"
+                </Link>
+                {phone && <> or{" "}<Link
+                  href={`https://api.whatsapp.com/send/?phone=${phone.replace(/\D/g, "")}&text&type=phone_number&app_absent=0`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-900 dark:text-white hover:underline">
                   WhatsApp
-                </Link>
+                </Link></>}
                 . Let’s connect and create something great together!
               </p>
             </div>

@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  // output   = "../lib/generated/prisma"
 }
 
 datasource db {
@@ -15,17 +8,21 @@ datasource db {
 }
 
 model Projects {
-  id           String     @id @unique @default(uuid())
-  judul        String
-  category     String
-  url          String?
-  photo        String?
-  tech         String?
-  site         String?
-  desc         String?
-  status       String?
-  createdAt    DateTime?  @default(now()) @map("created_at")
-  updatedAt    DateTime?  @default(now()) @map("updated_at")
+  id        String    @id @default(uuid())
+  judul     String
+  category  String
+  url       String?
+  photo     String?
+  tech      String?
+  site      String?
+  desc      String?
+  status    String?
+  ownerId   Int?      @map("owner_id")
+  owner     Users?    @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @map("updated_at")
+
+  @@index([ownerId])
 }
 
 model Certificates {
@@ -35,17 +32,25 @@ model Certificates {
   date      String
   site      String
   photo     String?
-  status    String?      
+  status    String?
+  ownerId   Int?      @map("owner_id")
+  owner     Users?    @relation(fields: [ownerId], references: [id], onDelete: SetNull)
   createdAt DateTime? @default(now()) @map("created_at")
   updatedAt DateTime? @default(now()) @map("updated_at")
+
+  @@index([ownerId])
 }
 
 model Educations {
-  id     Int      @id @default(autoincrement())
-  name   String
-  school String
-  major  String
-  date   String
+  id      Int    @id @default(autoincrement())
+  name    String
+  school  String
+  major   String
+  date    String
+  ownerId Int?   @map("owner_id")
+  owner   Users? @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+
+  @@index([ownerId])
 }
 
 model Experiences {
@@ -55,41 +60,66 @@ model Experiences {
   duration     String
   type         String
   jobdesks     Jobdesk[]
-  createdAt    DateTime?  @default(now()) @map("created_at")
-  updatedAt    DateTime?  @default(now()) @map("updated_at")
+  ownerId      Int?      @map("owner_id")
+  owner        Users?    @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  createdAt    DateTime? @default(now()) @map("created_at")
+  updatedAt    DateTime? @default(now()) @map("updated_at")
+
+  @@index([ownerId])
 }
 
 model Jobdesk {
-  id           Int          @id @default(autoincrement())
-  experiences  Experiences  @relation(fields: [experiences_id], references: [id], onDelete: Cascade)
+  id             Int         @id @default(autoincrement())
+  experiences    Experiences @relation(fields: [experiences_id], references: [id], onDelete: Cascade)
   experiences_id Int
-  description  String
-  createdAt    DateTime?    @default(now()) @map("created_at")
-  updatedAt    DateTime?    @default(now()) @map("updated_at")
+  description    String
+  createdAt      DateTime?   @default(now()) @map("created_at")
+  updatedAt      DateTime?   @default(now()) @map("updated_at")
 }
 
 model Users {
-  id            Int       @id @default(autoincrement())
-  username      String    @unique
-  password      String
-  createdAt     DateTime? @default(now()) @map("created_at")
-  updatedAt     DateTime? @default(now()) @map("updated_at")
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  email        String?       @unique
+  password     String
+  name         String?
+  photo        String?
+  phone        String?
+  instagram    String?
+  twitter      String?
+  linkedin     String?
+  github       String?
+  upwork       String?
+  projects     Projects[]
+  certificates Certificates[]
+  educations   Educations[]
+  experiences  Experiences[]
+  techStacks   TechStack[]
+  about        About?
+  createdAt    DateTime?     @default(now()) @map("created_at")
+  updatedAt    DateTime?     @default(now()) @map("updated_at")
 }
 
 model TechStack {
-  id            Int       @id @default(autoincrement())
-  name          String   
-  image         String
-  description   String?
-  createdAt     DateTime? @default(now()) @map("created_at")
-  updatedAt     DateTime? @default(now()) @map("updated_at")
+  id          Int       @id @default(autoincrement())
+  name        String
+  image       String
+  description String?
+  ownerId     Int?      @map("owner_id")
+  owner       Users?    @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  createdAt   DateTime? @default(now()) @map("created_at")
+  updatedAt   DateTime? @default(now()) @map("updated_at")
+
+  @@index([ownerId])
 }
 
 model About {
-   id           Int       @id @default(autoincrement())
-   about        String
-   what_i_do    String
-   role         String?
-  createdAt     DateTime? @default(now()) @map("created_at")
-  cpdatedAt     DateTime? @default(now()) @map("updated_at")
+  id         Int       @id @default(autoincrement())
+  about      String
+  what_i_do  String
+  role       String?
+  ownerId    Int?      @unique @map("owner_id")
+  owner      Users?    @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  createdAt  DateTime? @default(now()) @map("created_at")
+  updatedAt  DateTime? @default(now()) @map("updated_at")
 }

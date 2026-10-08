@@ -11,17 +11,6 @@ export default function WorkExperiences({ data }: WorkExperiencesProps) {
   // Initialize state with the received data
   const [experiences] = useState<WorkExperienceType[]>(data);
 
-  // Early return if no experiences
-  if (!experiences || experiences.length === 0) {
-    return (
-      <section id="work-experiences" className="py-10">
-        <div className="text-center text-gray-500 dark:text-white">
-          No work experiences to display
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section id="work-experiences">
       <div className="flex flex-col max-w-6xl sm:mx-auto mx-5 sm:mb-20">
@@ -35,6 +24,11 @@ export default function WorkExperiences({ data }: WorkExperiencesProps) {
         </span>
 
         <div className="sm:my-20 mx-2">
+          {experiences.length === 0 ? (
+            <p className="py-10 text-center text-base text-gray-500 dark:text-gray-300">
+              No work experiences to display yet.
+            </p>
+          ) : (
           <ol className="sm:text-3xl text-xl relative space-y-8 before:absolute before:-ml-px before:h-full before:w-0.5 before:rounded-full before:bg-gray-200 ">
             {experiences.map((exp) => (
               <li
@@ -65,6 +59,7 @@ export default function WorkExperiences({ data }: WorkExperiencesProps) {
               </li>
             ))}
           </ol>
+          )}
         </div>
       </div>
     </section>

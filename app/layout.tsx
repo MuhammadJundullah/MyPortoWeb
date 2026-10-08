@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Source_Sans_3, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import Footer from "./_sections/Footer";
 
 const fontSans = Source_Sans_3({
   variable: "--font-sans",
@@ -32,9 +31,6 @@ export default function RootLayout({
         <div className="min-h-screen flex flex-col mx-auto max-w-6xl">
           <div className="flex-1 flex flex-col items-center justify-center pb-10">
             {children}
-          </div>
-          <div className="sm:w-full border-t sm:mx-0 mx-5">
-            <Footer />
           </div>
         </div>
       </body>

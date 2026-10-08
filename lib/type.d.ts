@@ -75,4 +75,5 @@ export type aboutType = {
   id: string;
   about: string;
   what_i_do: string;
+  role: string;
 };

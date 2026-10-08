@@ -116,7 +116,6 @@ export default function EditProject({
 
       // Append semua field text
       formData.append("judul", project.judul);
-      formData.append("category", project.category);
       formData.append("desc", project.desc || "");
       formData.append("status", project.status || "");
       formData.append("url", project.url || "");
@@ -153,22 +152,13 @@ export default function EditProject({
     { value: "archived", label: "Archived" },
   ];
 
-  const categoryOptions = [
-    { value: "Data Analytics", label: "Data Analytics" },
-    { value: "Data Science", label: "Data Science" },
-    { value: "Data Engineering", label: "Data Engineering" },
-    { value: "Web Development", label: "Web Development" },
-    { value: "Mobile Development<", label: "Mobile Development" },
-    { value: "Ai Ml", label: "AI/ML" },
-  ];
-
   return (
-    <div className="md:w-6xl flex flex-col justify-center text-black">
+    <div className="mx-auto flex w-full max-w-3xl flex-col justify-center px-4 py-6 text-black sm:px-6">
       <div>
         <BackButton href="/admin/projects" />
       </div>
 
-      <form className="py-3">
+      <form className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900 sm:p-8">
         <div className="flex flex-col gap-8 dark:text-white">
           <TextInput
             id="judul"
@@ -178,17 +168,6 @@ export default function EditProject({
             value={project.judul}
             onChange={handleChange}
             placeholder="Nama Proyek"
-            required
-          />
-
-          <SelectInput
-            id="category"
-            label="Kategori"
-            name="category"
-            value={project.category}
-            onChange={handleChange}
-            options={categoryOptions}
-            placeholder="Pilih kategori proyek"
             required
           />
 
@@ -208,7 +187,7 @@ export default function EditProject({
             id="photo"
             label="Ubah Foto"
             name="imaphotoge"
-            image={project.photo || "null"}
+            image={project.photo || null}
             onChange={handleFileChange}
             alt="Project Photo"
           />

@@ -6,13 +6,12 @@ import { FaArrowLeft, FaExternalLinkAlt, FaGithub } from "react-icons/fa";
 import { ProjectsType } from "@/lib/type";
 import { notFound } from "next/navigation";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
+export default async function Page({ params, searchParams }: {
+  params: Promise<{ id: string }>; searchParams: Promise<{ username?: string }>;
 }) {
   const { id } = await params;
-  const res = await fetchDataFromAPI(id);
+  const { username } = await searchParams;
+  const res = await fetchDataFromAPI(id, username);
   const data: ProjectsType[] = res.data;
 
   // Error handling
@@ -35,7 +34,7 @@ export default async function Page({
         {/* Header */}
         <div className="flex items-center mb-8">
           <Link
-            href="/#projects"
+            href={username ? "/" + username + "#projects" : "/#projects"}
             className="group flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200">
             <FaArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="ml-2 font-medium">Back to Projects</span>
@@ -148,17 +147,16 @@ export default async function Page({
 
 import type { Metadata } from "next";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>;
+export async function generateMetadata({ params, searchParams }: {
+  params: Promise<{ id: string }>; searchParams: Promise<{ username?: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
+  const { username } = await searchParams;
   const { id } = resolvedParams;
 
-  const data = await fetchDataFromAPI(id);
+  const data = await fetchDataFromAPI(id, username);
 
-  if (!data || data.length === 0) {
+  if (!data.data.length) {
     return {
       title: "Project Not Found",
       description: "The requested project could not be found.",
@@ -175,14 +173,14 @@ export async function generateMetadata({
     openGraph: {
       title: `${item.judul} - My Portfolio Project`,
       description: cleanDescription,
-      images: item.photo ? [{ url: item.photo }] : [],
+      images: typeof item.photo === "string" && item.photo ? [{ url: item.photo }] : [],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: `${item.judul} - My Portfolio Project`,
       description: cleanDescription,
-      images: item.photo ? [item.photo] : [],
+      images: typeof item.photo === "string" && item.photo ? [item.photo] : [],
     },
   };
 }

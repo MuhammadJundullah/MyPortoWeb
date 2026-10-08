@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { UserType } from "@/lib/type";
 
 declare module "next-auth" {
   interface Session {
@@ -21,7 +20,7 @@ const handler = NextAuth({
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: { label: "username", type: "text" },
+      username: { label: "Username atau email", type: "text" },
         password: { label: "Password", type: "password" },
       },
 
@@ -32,13 +31,11 @@ const handler = NextAuth({
         }
 
         try {
-          const user: UserType | null = await prisma.users.findUnique({
-            where: { username: credentials.username },
-            select: {
-              id: true,
-              username: true,
-              password: true,
-            },
+          const rawIdentifier = credentials.username.trim();
+          const identifier = rawIdentifier.toLowerCase();
+          const user = await prisma.users.findFirst({
+            where: { OR: [{ username: identifier }, { username: rawIdentifier }, { email: identifier }] },
+            select: { id: true, username: true, password: true, name: true, email: true },
           });
 
           if (!user) {
@@ -61,7 +58,7 @@ const handler = NextAuth({
             return null;
           }
 
-          return { id: String(user.id), name: user.username };
+          return { id: String(user.id), name: user.name || user.username, username: user.username, email: user.email } as any;
         } catch (error) {
           console.error("Database error during authorization:", error);
           return null;
@@ -81,7 +78,8 @@ const handler = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.username = user.name;
+        token.username = (user as any).username || user.name;
+        token.email = user.email;
       }
       return token;
     },

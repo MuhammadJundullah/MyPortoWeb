@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
@@ -10,21 +10,11 @@ import CustomAnimatedContent from "@/app/_components/AnimatedContent/CustomAnima
 
 interface Props {
   data: ProjectsType[];
+  username?: string;
 }
 
-export default function Projects({ data }: Props) {
+export default function Projects({ data, username }: Props) {
   const [projects] = useState<ProjectsType[]>(data);
-  const [selectedTech, setSelectedTech] = useState("");
-
-  const filteredProjects = useMemo(() => {
-    if (!selectedTech) {
-      return projects;
-    }
-    const categoryQuery = selectedTech.toLowerCase();
-    return projects.filter((project) =>
-      project.category.toLowerCase().includes(categoryQuery)
-    );
-  }, [projects, selectedTech]);
 
   return (
     <section id="projects">
@@ -38,47 +28,21 @@ export default function Projects({ data }: Props) {
           <span className="h-px flex-1 bg-gray-300"></span>
         </span>
 
-        <div className="flex justify-center mt-20 px-4">
-          <div className="relative w-full sm:w-1/2">
-            <select
-              value={selectedTech}
-              onChange={(e) => setSelectedTech(e.target.value)}
-              className="appearance-none w-full p-3 text-sm text-gray-700 font-bold dark:text-black bg-white dark:bg-gray-300 border border-gray-300 rounded-md shadow-sm pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 cursor-pointer hover:border-gray-400">
-              <option value="">Show all</option>
-
-              <option value="Data Analytics">Data Analytics</option>
-              <option value="Data Science">Data Science</option>
-              <option value="Data Engineering">Data Engineering</option>
-              <option value="Web Development">Web Development</option>
-              <option value="Mobile Development">Mobile Development</option>
-              <option value="AI ML">AI/ML</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-black">
-              <svg
-                className="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20">
-                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-        <p className="py-1 text-sm text-gray-700 dark:text-white font-bold">
-          filter by projects category.
-        </p>
-
         <div className="sm:my-20 my-8">
+          {projects.length === 0 ? (
+            <p className="py-10 text-center text-base text-gray-500 dark:text-gray-300">
+              No project experiences to display yet.
+            </p>
+          ) : (
           <div className="flex flex-wrap justify-center gap-8">
-            {filteredProjects.map((project, i) => {
+            {projects.map((project, i) => {
               const animationDelay = i * 0.01;
               const finalDirection = "vertical";
               const finalDistance = 80;
               return (
                 <div key={i}>
                   <Link
-                    href={`/project/${project.category
-                      .toLowerCase()
-                      .replace(/\s+/g, "-")}/${project.id}`}
+                    href={`/project/web-development/${project.id}${username ? `?username=${encodeURIComponent(username)}` : ""}`}
                     className="group block">
                     <div className="group-hover:scale-105 transition-all duration-300">
                       <CustomAnimatedContent
@@ -92,27 +56,23 @@ export default function Projects({ data }: Props) {
                         <div className="relative w-80 h-96 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700 group-hover:shadow-xl transition-all duration-300">
                           {/* Image Section */}
                           <div className="relative h-48 overflow-hidden">
-                            <Image
-                              src={
-                                typeof project.photo === "string"
-                                  ? project.photo
-                                  : "/placeholder.jpg"
-                              }
-                              alt={project.judul}
-                              height={200}
-                              width={320}
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                            />
+                            {typeof project.photo === "string" && project.photo ? (
+                              <Image
+                                src={project.photo}
+                                alt={project.judul}
+                                height={200}
+                                width={320}
+                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                              />
+                            ) : (
+                              <div className="flex h-full items-center justify-center bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 text-sm font-medium text-slate-500 dark:from-gray-700 dark:via-gray-800 dark:to-slate-900 dark:text-gray-300">
+                                Belum ada foto proyek
+                              </div>
+                            )}
 
                             {/* Gradient Overlay */}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-                            {/* Tech Badge */}
-                            {/* <div className="absolute top-3 right-3">
-                              <span className="bg-black/70 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
-                                {project.category} 
-                              </span>
-                            </div> */}
                           </div>
 
                           {/* Content Section */}
@@ -127,8 +87,7 @@ export default function Projects({ data }: Props) {
 
                             {/* Tech Stack */}
                             <div className="flex flex-wrap gap-1 mb-4">
-                              {project.tech
-                                .split(",")
+                              {(project.tech || "").split(",").filter(Boolean)
                                 .slice(0, 3)
                                 .map((tech, index) => (
                                   <span
@@ -137,9 +96,9 @@ export default function Projects({ data }: Props) {
                                     {tech.trim()}
                                   </span>
                                 ))}
-                              {project.tech.split(",").length > 3 && (
+                              {(project.tech || "").split(",").filter(Boolean).length > 3 && (
                                 <span className="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs px-2 py-1 rounded-md">
-                                  +{project.tech.split(",").length - 3}
+                                  +{(project.tech || "").split(",").filter(Boolean).length - 3}
                                 </span>
                               )}
                             </div>
@@ -163,6 +122,7 @@ export default function Projects({ data }: Props) {
               );
             })}
           </div>
+          )}
         </div>
       </div>
     </section>

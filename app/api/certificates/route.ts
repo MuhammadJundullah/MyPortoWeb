@@ -1,9 +1,9 @@
 import { v2 as cloudinary } from "cloudinary";
 import prisma from "@/lib/prisma";
 import { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
 import { z } from "zod";
 import { apiResponse, handleError } from "@/lib/api-utils";
+import { getOwnerId, getReadOwnerId } from "@/lib/portfolio-owner";
 
 if (process.env.CLOUDINARY_URL) {
   cloudinary.config({
@@ -31,9 +31,12 @@ export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const status = searchParams.get("status");
+    const ownerId = await getReadOwnerId(req);
+    if (ownerId === undefined) return handleError(null, "Portfolio tidak ditemukan.", 404);
+    const viewerOwnerId = await getOwnerId(req);
 
     const certificates = await prisma.certificates.findMany({
-      where: status ? { status: status } : {},
+      where: { ownerId, status: ownerId !== null && viewerOwnerId === ownerId ? (status || undefined) : "published" },
       orderBy: [
         {
           status: "desc",
@@ -53,9 +56,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-  if (!token) {
+  const ownerId = await getOwnerId(req);
+  if (!ownerId) {
     return handleError(null, "Unauthorized", 401);
   }
 
@@ -104,6 +106,7 @@ export async function POST(req: NextRequest) {
         date: date,
         photo: photoUrl,
         status: status,
+        ownerId,
       },
     });
 
@@ -119,9 +122,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-  if (!token) {
+  const ownerId = await getOwnerId(req);
+  if (!ownerId) {
     return handleError(null, "Unauthorized", 401);
   }
 
@@ -138,10 +140,8 @@ export async function DELETE(req: NextRequest) {
       return handleError(null, "Invalid ID.", 400);
     }
 
-    const certificateToDelete = await prisma.certificates.findUnique({
-      where: {
-        id: certificateId,
-      },
+    const certificateToDelete = await prisma.certificates.findFirst({
+      where: { id: certificateId, ownerId },
       select: {
         id: true,
         photo: true,
@@ -167,11 +167,7 @@ export async function DELETE(req: NextRequest) {
       }
     }
 
-    const deletedCertificate = await prisma.certificates.delete({
-      where: {
-        id: certificateId,
-      },
-    });
+    const deletedCertificate = await prisma.certificates.delete({ where: { id: certificateId } });
 
     return apiResponse(
       true,
@@ -185,9 +181,8 @@ export async function DELETE(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-  if (!token) {
+  const ownerId = await getOwnerId(req);
+  if (!ownerId) {
     return handleError(null, "Unauthorized", 401);
   }
 
@@ -206,12 +201,10 @@ export async function PUT(req: NextRequest) {
       return handleError(parsed.error.flatten().fieldErrors, "Invalid input", 400);
     }
 
-    const certificate = await prisma.certificates.update({
-      where: {
-        id: parseInt(id),
-      },
-      data: parsed.data,
-    });
+    const certificateId = parseInt(id);
+    const existing = await prisma.certificates.findFirst({ where: { id: certificateId, ownerId } });
+    if (!existing) return handleError(null, "Certificate not found.", 404);
+    const certificate = await prisma.certificates.update({ where: { id: certificateId }, data: parsed.data });
 
     return apiResponse(true, certificate, "Certificate updated successfully.", 200);
   } catch (err) {
@@ -220,9 +213,8 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-  if (!token) {
+  const ownerId = await getOwnerId(req);
+  if (!ownerId) {
     return handleError(null, "Unauthorized", 401);
   }
 
@@ -241,12 +233,10 @@ export async function PATCH(req: NextRequest) {
       return handleError(parsed.error.flatten().fieldErrors, "Invalid input", 400);
     }
 
-    const certificate = await prisma.certificates.update({
-      where: {
-        id: parseInt(id),
-      },
-      data: parsed.data,
-    });
+    const certificateId = parseInt(id);
+    const existing = await prisma.certificates.findFirst({ where: { id: certificateId, ownerId } });
+    if (!existing) return handleError(null, "Certificate not found.", 404);
+    const certificate = await prisma.certificates.update({ where: { id: certificateId }, data: parsed.data });
 
     return apiResponse(
       true,

@@ -5,14 +5,13 @@ import Image from "next/image";
 import { FaArrowLeft, FaGithub } from "react-icons/fa";
 import { notFound } from "next/navigation";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
+export default async function Page({ params, searchParams }: {
+  params: Promise<{ id: string }>; searchParams: Promise<{ username?: string }>;
 }) {
   const { id } = await params;
+  const { username } = await searchParams;
 
-  const res = await fetchDataFromAPI(id);
+  const res = await fetchDataFromAPI(id, username);
   const data = res.data;
 
   if (
@@ -34,7 +33,7 @@ export default async function Page({
         {/* Navigation */}
         <div className="mb-8">
           <Link
-            href="/#projects"
+            href={username ? "/" + username + "#projects" : "/#projects"}
             className="inline-flex items-center gap-3 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 group">
             <FaArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="font-medium">Back to Projects</span>
@@ -53,7 +52,7 @@ export default async function Page({
             </div>
 
             {/* Architecture Diagram */}
-            {item.photo && (
+            {typeof item.photo === "string" && item.photo && (
               <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 shadow-sm">
               {/*  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                    <FaPipeline className="w-5 h-5 text-cyan-500" /> 
@@ -93,7 +92,7 @@ export default async function Page({
                   Tech Stack
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {item.tech.split(",").map((tech: string, index: string) => (
+                  {item.tech.split(",").map((tech: string, index: number) => (
                     <span
                       key={index}
                       className="px-3 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-medium border border-slate-200 dark:border-slate-600">
@@ -149,17 +148,16 @@ export default async function Page({
 
 import type { Metadata } from "next";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>;
+export async function generateMetadata({ params, searchParams }: {
+  params: Promise<{ id: string }>; searchParams: Promise<{ username?: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
+  const { username } = await searchParams;
   const { id } = resolvedParams;
 
-  const data = await fetchDataFromAPI(id);
+  const data = await fetchDataFromAPI(id, username);
 
-  if (!data || data.length === 0) {
+  if (!data.data.length) {
     return {
       title: "Project Not Found",
       description: "The requested project could not be found.",
@@ -176,14 +174,14 @@ export async function generateMetadata({
     openGraph: {
       title: `${item.judul} - Data Engineering Project`,
       description: cleanDescription,
-      images: item.photo ? [{ url: item.photo }] : [],
+      images: typeof item.photo === "string" && item.photo ? [{ url: item.photo }] : [],
       type: "article",
     },
     twitter: {
       card: "summary_large_image",
       title: `${item.judul} - Data Engineering Project`,
       description: cleanDescription,
-      images: item.photo ? [item.photo] : [],
+      images: typeof item.photo === "string" && item.photo ? [item.photo] : [],
     },
   };
 }

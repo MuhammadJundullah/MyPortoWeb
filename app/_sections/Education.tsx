@@ -3,7 +3,6 @@ import React from "react";
 import { useState } from "react";
 import Image from "next/image";
 import type { EducationsType } from "@/lib/type";
-import Loading from "@/app/_components/Loading";
 
 interface EducationsProps {
   data: EducationsType[];
@@ -23,9 +22,9 @@ export default function Educations({ data }: EducationsProps) {
           </span>
           <span className="h-px flex-1 bg-gray-300"></span>
         </span>
-        <div className="my-20">
+        <div className="my-20 sm:mx-100 mx-10">
           {educations.length === 0 ? (
-            <Loading />
+            <p className="text-gray-500 dark:text-gray-300">No education history to display yet.</p>
           ) : (
             educations.map((education, index) => (
               <div key={index}>

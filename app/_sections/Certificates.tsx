@@ -3,7 +3,6 @@
 import { useState } from "react";
 import * as React from "react";
 import Image from "next/image";
-import Loading from "@/app/_components/Loading";
 import type { CertificatesType } from "@/lib/type";
 import CustomAnimatedContent from "@/app/_components/AnimatedContent/CustomAnimateContent";
 import ImageModal from "@/app/_components/ImageModal/ImageModal";
@@ -44,10 +43,10 @@ export default function CertificatesComponent({ data }: CertificatesProps) {
           </span>
           <span className="h-px flex-1 bg-gray-300 "></span>
         </span>
-        <div className="my-20">
+        <div className="my-20 sm:mx-100 mx-10">
           <div className="flex flex-wrap justify-center gap-5">
             {certificates.length === 0 ? (
-              <Loading />
+              <p className="text-gray-500 dark:text-gray-300">No certificates to display yet.</p>
             ) : (
               certificates.map((certificate, i) => {
                 const animationDistance = 50;

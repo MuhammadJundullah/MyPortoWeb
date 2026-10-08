@@ -1,14 +1,14 @@
 import { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
 import { apiResponse, handleError } from "@/lib/api-utils";
 import { uploadToCloudinary } from "@/lib/cloudinary";
+import { getOwnerId, getReadOwnerId } from "@/lib/portfolio-owner";
 
 const projectSchema = z.object({
   judul: z.string().min(1, "Judul is required"),
-  category: z.string().min(1, "Category is required"),
+  category: z.string().optional(),
   desc: z.string().optional(),
   status: z.string().optional(),
   url: z.string().optional(),
@@ -29,9 +29,8 @@ function isValidUUID(uuid: string): boolean {
 
 // --- POST /api/projects ---
 export async function POST(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-  if (!token) {
+  const ownerId = await getOwnerId(req);
+  if (!ownerId) {
     return handleError(null, "Unauthorized", 401);
   }
 
@@ -40,7 +39,7 @@ export async function POST(req: NextRequest) {
 
     const parsed = projectSchema.safeParse({
       judul: formData.get("judul"),
-      category: formData.get("category"),
+      category: formData.get("category") || "General",
       desc: formData.get("desc"),
       status: formData.get("status"),
       url: formData.get("url"),
@@ -58,7 +57,9 @@ export async function POST(req: NextRequest) {
     await prisma.projects.create({
       data: {
         ...parsed.data,
+        category: parsed.data.category || "General",
         photo: photoUrl,
+        ownerId,
       },
     });
 
@@ -75,6 +76,9 @@ export async function GET(req: NextRequest) {
     const id = searchParams.get("id");
     const category = searchParams.get("category");
     const status = searchParams.get("status");
+    const ownerId = await getReadOwnerId(req);
+    if (ownerId === undefined) return handleError(null, "Portfolio tidak ditemukan.", 404);
+    const viewerOwnerId = await getOwnerId(req);
 
     if (status && !["draft", "published", "archived"].includes(status)) {
       return handleError(
@@ -84,18 +88,17 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    let whereClause: Prisma.ProjectsWhereInput = {};
+    let whereClause: Prisma.ProjectsWhereInput = { ownerId };
 
     if (id) {
       if (!isValidUUID(id)) {
         return handleError(null, "Invalid UUID.", 400);
       }
       whereClause.id = id;
-    } else if (category) {
-      whereClause.category = category;
-    } else if (status) {
-      whereClause.status = status;
     }
+    if (category) whereClause.category = category;
+    if (status) whereClause.status = status;
+    if (ownerId === null || viewerOwnerId !== ownerId) whereClause.status = "published";
 
     const projectsData = await prisma.projects.findMany({
       where: whereClause,
@@ -114,9 +117,8 @@ export async function GET(req: NextRequest) {
 
 // --- PUT /api/projects?id=:id ---
 export async function PUT(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-  if (!token) {
+  const ownerId = await getOwnerId(req);
+  if (!ownerId) {
     return handleError(null, "Unauthorized", 401);
   }
 
@@ -135,7 +137,7 @@ export async function PUT(req: NextRequest) {
     const formData = await req.formData();
     const parsed = projectSchema.safeParse({
       judul: formData.get("judul"),
-      category: formData.get("category"),
+      category: formData.get("category") || "General",
       desc: formData.get("desc"),
       status: formData.get("status"),
       url: formData.get("url"),
@@ -153,8 +155,8 @@ export async function PUT(req: NextRequest) {
     const updatedProject = await prisma.$transaction(async (tx) => {
       let currentProject;
       if (idParam) {
-        currentProject = await tx.projects.findUnique({
-          where: { id: idParam },
+        currentProject = await tx.projects.findFirst({
+          where: { id: idParam, ownerId },
         });
       }
 
@@ -179,6 +181,7 @@ export async function PUT(req: NextRequest) {
         },
         data: {
           ...parsed.data,
+          category: parsed.data.category || "General",
           photo: finalPhotoUrl,
         },
       });
@@ -194,12 +197,8 @@ export async function PUT(req: NextRequest) {
 
 // --- PATCH /api/projects?id=:id ---
 export async function PATCH(req: NextRequest) {
-  const token = await getToken({
-    req: req,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
-
-  if (!token) {
+  const ownerId = await getOwnerId(req);
+  if (!ownerId) {
     return handleError(null, "Unauthorized", 401);
   }
 
@@ -219,22 +218,17 @@ export async function PATCH(req: NextRequest) {
       return handleError(parsed.error.flatten().fieldErrors, "Invalid input", 400);
     }
 
-    const updatedProject = await prisma.projects.update({
-      where: {
-        id: id,
-      },
+    const updatedProject = await prisma.projects.updateMany({
+      where: { id, ownerId },
       data: {
         status: parsed.data.status,
       },
-      select: {
-        id: true,
-        status: true,
-      },
     });
+    if (!updatedProject.count) return handleError(null, "Project not found", 404);
 
     return apiResponse(
       true,
-      updatedProject,
+      { id, status: parsed.data.status },
       "Status updated successfully.",
       200
     );
@@ -245,9 +239,8 @@ export async function PATCH(req: NextRequest) {
 
 // --- DELETE /api/projects?id=:id ---
 export async function DELETE(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-  if (!token) {
+  const ownerId = await getOwnerId(req);
+  if (!ownerId) {
     return handleError(null, "Unauthorized", 401);
   }
 
@@ -259,8 +252,8 @@ export async function DELETE(req: NextRequest) {
       return handleError(null, "UUID is needed.", 400);
     }
 
-    const projectToDelete = await prisma.projects.findUnique({
-      where: { id: id },
+    const projectToDelete = await prisma.projects.findFirst({
+      where: { id, ownerId },
       select: { photo: true, id: true },
     });
 
@@ -285,9 +278,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     await prisma.projects.delete({
-      where: {
-        id: projectToDelete.id,
-      },
+      where: { id: projectToDelete.id },
     });
 
     return apiResponse(true, null, "Project deleted successfully.", 200);

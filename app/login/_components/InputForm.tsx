@@ -95,10 +95,10 @@ export default function InputForm() {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="dark:text-white">Username</FormLabel>
+          <FormLabel className="dark:text-white">Username atau email</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="type ur username"
+                  placeholder="username atau email"
                   {...field}
                   autoComplete="false"
                   className="placeholder:dark:text-gray-300 placeholder:dark:font-bold dark:text-white"

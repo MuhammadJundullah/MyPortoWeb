@@ -1,10 +1,10 @@
 import { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prisma";
 import { apiResponse, handleError } from "@/lib/api-utils";
 import { z } from "zod";
 import { uploadToCloudinary } from "@/lib/cloudinary";
 import { v2 as cloudinary } from "cloudinary";
+import { getOwnerId, getReadOwnerId } from "@/lib/portfolio-owner";
 
 const techStackSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -12,9 +12,8 @@ const techStackSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-  if (!token) {
+  const ownerId = await getOwnerId(req);
+  if (!ownerId) {
     return handleError(null, "Unauthorized.", 401);
   }
 
@@ -40,6 +39,7 @@ export async function POST(req: NextRequest) {
       data: {
         ...parsed.data,
         image: imageUrl,
+        ownerId,
       },
     });
 
@@ -54,12 +54,14 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const filter = searchParams.get("filter");
     const strId = searchParams.get("id");
+    const ownerId = await getReadOwnerId(req);
+    if (ownerId === undefined) return handleError(null, "Portfolio tidak ditemukan.", 404);
 
     if (strId) {
       const id = parseInt(strId, 10);
 
-      const techStack = await prisma.techStack.findUnique({
-        where: { id },
+      const techStack = await prisma.techStack.findFirst({
+        where: { id, ownerId },
       });
 
       return apiResponse(true, techStack, "TechStack fetched successfully.", 200);
@@ -69,13 +71,14 @@ export async function GET(req: NextRequest) {
       const selectClause = filter;
 
       const techStack = await prisma.techStack.findMany({
+        where: { ownerId },
         select: { [selectClause]: true },
       });
 
       return apiResponse(true, techStack, "TechStack fetched successfully.", 200);
     }
 
-    const techStack = await prisma.techStack.findMany();
+    const techStack = await prisma.techStack.findMany({ where: { ownerId } });
 
     return apiResponse(true, techStack, "TechStack fetched successfully.", 200);
   } catch (error) {
@@ -84,9 +87,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-  if (!token) {
+  const ownerId = await getOwnerId(req);
+  if (!ownerId) {
     return handleError(null, "Unauthorized", 401);
   }
 
@@ -96,10 +98,8 @@ export async function DELETE(req: NextRequest) {
 
     const newId = id != null ? parseInt(id, 10) : undefined;
 
-    const techstackToDelete = await prisma.techStack.findUnique({
-      where: {
-        id: newId,
-      },
+    const techstackToDelete = await prisma.techStack.findFirst({
+      where: { id: newId, ownerId },
 
       select: { image: true },
     });
@@ -123,11 +123,7 @@ export async function DELETE(req: NextRequest) {
       }
     }
 
-    await prisma.techStack.delete({
-      where: {
-        id: newId,
-      },
-    });
+    await prisma.techStack.delete({ where: { id: newId } });
 
     return apiResponse(true, null, "Delete techstack successfully.", 200);
   } catch (error) {
@@ -136,6 +132,8 @@ export async function DELETE(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+  const ownerId = await getOwnerId(req);
+  if (!ownerId) return handleError(null, "Unauthorized", 401);
   try {
     const searchParams = req.nextUrl.searchParams;
     const strId = searchParams.get("id");
@@ -160,8 +158,8 @@ export async function PUT(req: NextRequest) {
     const newImageFile = formData.get("image") as File | null;
     const deletePhotoExplicitly = formData.get("deleteImage") === "true";
 
-    const currentProject = await prisma.techStack.findUnique({
-      where: { id: id },
+    const currentProject = await prisma.techStack.findFirst({
+      where: { id, ownerId },
     });
 
     if (!currentProject) {

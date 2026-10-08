@@ -1,14 +1,18 @@
 import prisma from "@/lib/prisma";
 import { NextRequest } from "next/server";
 import { apiResponse, handleError } from "@/lib/api-utils";
+import { getOwnerId, getReadOwnerId } from "@/lib/portfolio-owner";
 
 export async function GET(req: NextRequest) {
   try {
+    const ownerId = await getReadOwnerId(req);
+    if (ownerId === undefined) return handleError(null, "Portfolio tidak ditemukan.", 404);
     const { searchParams } = new URL(req.url);
     const skip = searchParams.get("skip");
     const take = searchParams.get("take");
 
     const experiences = await prisma.experiences.findMany({
+      where: { ownerId },
       skip: skip ? parseInt(skip) : undefined,
       take: take ? parseInt(take) : undefined,
       orderBy: { id: "desc" },
@@ -49,6 +53,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const ownerId = await getOwnerId(request);
+  if (!ownerId) return handleError(null, "Unauthorized", 401);
   try {
     const body = await request.json();
 
@@ -89,6 +95,7 @@ export async function POST(request: NextRequest) {
           position,
           duration,
           type,
+          ownerId,
         },
       });
 
@@ -150,6 +157,8 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
+  const ownerId = await getOwnerId(request);
+  if (!ownerId) return handleError(null, "Unauthorized", 401);
   try {
     const body = await request.json();
 
@@ -193,8 +202,8 @@ export async function PUT(request: NextRequest) {
     }
 
     // Cek apakah experience exists
-    const existingExperience = await prisma.experiences.findUnique({
-      where: { id: experience_id },
+    const existingExperience = await prisma.experiences.findFirst({
+      where: { id: experience_id, ownerId },
     });
 
     if (!existingExperience) {
@@ -281,6 +290,8 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const ownerId = await getOwnerId(request);
+  if (!ownerId) return handleError(null, "Unauthorized", 401);
   try {
     const { searchParams } = new URL(request.url);
     const experience_id = searchParams.get("experience_id");
@@ -295,8 +306,8 @@ export async function DELETE(request: NextRequest) {
       }
 
       // Cek apakah jobdesk exists
-      const existingJobdesk = await prisma.jobdesk.findUnique({
-        where: { id: jobdeskIdNum },
+      const existingJobdesk = await prisma.jobdesk.findFirst({
+        where: { id: jobdeskIdNum, experiences: { ownerId } },
         include: { experiences: true },
       });
 
@@ -329,8 +340,8 @@ export async function DELETE(request: NextRequest) {
       }
 
       // Cek apakah experience exists
-      const existingExperience = await prisma.experiences.findUnique({
-        where: { id: experienceIdNum },
+      const existingExperience = await prisma.experiences.findFirst({
+        where: { id: experienceIdNum, ownerId },
         include: {
           jobdesks: true,
         },

@@ -7,15 +7,15 @@ import { FaSquareUpwork } from "react-icons/fa6";
 import { ProjectsType } from "@/lib/type";
 import { notFound } from "next/navigation";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
+export default async function Page({ params, searchParams }: {
+  params: Promise<{ id: string }>; searchParams: Promise<{ username?: string }>;
 }) {
   const { id } = await params;
+  const { username } = await searchParams;
 
-  const res = await fetchDataFromAPI(id);
+  const res = await fetchDataFromAPI(id, username);
   const data: ProjectsType[] = res.data;
+  const upworkUrl = res.upworkUrl;
 
   if (
     !data ||
@@ -36,7 +36,7 @@ export default async function Page({
         {/* Navigation */}
         <div className="mb-8">
           <Link
-            href="/#projects"
+            href={username ? "/" + username + "#projects" : "/#projects"}
             className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-200 group">
             <FaArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="font-medium">Back to Projects</span>
@@ -57,17 +57,19 @@ export default async function Page({
             {/* Project Image */}
             <div className="relative group">
               <div className="relative h-64 sm:h-80 lg:h-96 rounded-2xl overflow-hidden border-2 border-slate-200/50 dark:border-gray-700/50 shadow-lg">
-                <Image
-                  src={
-                    typeof item.photo === "string"
-                      ? item.photo
-                      : "/placeholder.jpg"
-                  }
-                  alt={item.judul || "Project screenshot"}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  priority
-                />
+                {typeof item.photo === "string" && item.photo ? (
+                  <Image
+                    src={item.photo}
+                    alt={item.judul || "Project screenshot"}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    priority
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 text-sm font-medium text-slate-500 dark:from-gray-700 dark:via-gray-800 dark:to-slate-900 dark:text-gray-300">
+                    Belum ada foto proyek
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
               </div>
             </div>
@@ -93,7 +95,7 @@ export default async function Page({
                   Tech Stack
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {item.tech.split(",").map((tech, index) => (
+                  {(item.tech || "").split(",").filter(Boolean).map((tech, index) => (
                     <span
                       key={index}
                       className="px-3 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg text-sm font-medium border border-blue-200 dark:border-blue-800">
@@ -152,17 +154,17 @@ export default async function Page({
                       </span>
                     )}
                   </div>
-                   <div>
+                   {upworkUrl && <div>
                     <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Let’s build your next website together! </p>
                       <a
-                        href="https://www.upwork.com/freelancers/~018c1b59238a7ea8f7"
+                        href={upworkUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                         <FaSquareUpwork className="w-4 h-4" />
                         <span className="truncate">Hire me on Upwork.</span>
                       </a>
-                  </div>
+                  </div>}
                 </div>
               </div>
             </div>
@@ -175,17 +177,16 @@ export default async function Page({
 
 import type { Metadata } from "next";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>;
+export async function generateMetadata({ params, searchParams }: {
+  params: Promise<{ id: string }>; searchParams: Promise<{ username?: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
+  const { username } = await searchParams;
   const { id } = resolvedParams;
 
-  const data = await fetchDataFromAPI(id);
+  const data = await fetchDataFromAPI(id, username);
 
-  if (!data || data.length === 0) {
+  if (!data.data.length) {
     return {
       title: "Project Not Found",
       description: "The requested project could not be found.",
@@ -202,14 +203,14 @@ export async function generateMetadata({
     openGraph: {
       title: `${item.judul} - Web Development Project`,
       description: cleanDescription,
-      images: item.photo ? [{ url: item.photo }] : [],
+      images: typeof item.photo === "string" && item.photo ? [{ url: item.photo }] : [],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: `${item.judul} - Web Development Project`,
       description: cleanDescription,
-      images: item.photo ? [item.photo] : [],
+      images: typeof item.photo === "string" && item.photo ? [item.photo] : [],
     },
   };
 }

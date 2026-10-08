@@ -34,7 +34,6 @@ export default function AddProject() {
 
   const [project, setProject] = useState({
     judul: "",
-    category: "",
     url: "",
     photo: null as File | null,
     tech: "",
@@ -84,7 +83,6 @@ export default function AddProject() {
 
       // Menambahkan field-text ke FormData
       formData.append("judul", project.judul);
-      formData.append("category", project.category);
       formData.append("desc", project.desc);
       formData.append("status", project.status);
       formData.append("url", project.url);
@@ -111,7 +109,6 @@ export default function AddProject() {
       showToast("Project has been added successfully!", "success");
       setProject({
         judul: "",
-        category: "",
         url: "",
         photo: null,
         tech: "",
@@ -130,18 +127,9 @@ export default function AddProject() {
     { value: "archived", label: "Archived" },
   ];
 
-  const categoryOptions = [
-    { value: "Data Analytics", label: "Data Analytics" },
-    { value: "Data Science", label: "Data Science" },
-    { value: "Data Engineering", label: "Data Engineering" },
-    { value: "Web Development", label: "Web Development" },
-    { value: "Mobile Development", label: "Mobile Development" },
-    { value: "Ai Ml", label: "AI/ML" },
-  ];
-
   return (
     <div className="sm:mx-auto sm:w-6xl flex flex-col justify-center text-black">
-      <div>
+      <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6">
         <BackButton href="/admin/projects" />
       </div>
 
@@ -150,7 +138,7 @@ export default function AddProject() {
           <Loading />
         </div>
       ) : (
-        <form className="py-3" onSubmit={handleSubmit}>
+        <form className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900 sm:p-8" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-8">
             <TextInput
               id="judul"
@@ -163,17 +151,6 @@ export default function AddProject() {
               required
             />
 
-            <SelectInput
-              id="category"
-              label="Kategori"
-              name="category"
-              value={project.category}
-              onChange={handleChange}
-              options={categoryOptions}
-              placeholder="Pilih kategori proyek"
-              required
-            />
-
             <TextInput
               id="url"
               label="URL Repository Github"
@@ -182,7 +159,6 @@ export default function AddProject() {
               value={project.url}
               onChange={handleChange}
               placeholder="URL Repository Github"
-              required
             />
 
             <PhotoUpload
@@ -192,7 +168,6 @@ export default function AddProject() {
               onChange={handleFileChange}
               accept="image/png, image/jpeg"
               hint="*Hanya format .png atau .jpeg"
-              required
             />
 
             <TextInput
