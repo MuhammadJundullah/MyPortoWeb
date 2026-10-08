@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Toast } from "@/app/login/_components/Toast";
 import type { EducationsType } from "@/lib/type";
+import Image from "next/image";
 
 type Education = EducationsType & { id: number };
 const blank = { school: "", major: "", date: "" };
@@ -41,7 +42,7 @@ export default function ManageEducations() {
       <Input type="file" accept="image/*" required={!editing} onChange={e => setImage(e.target.files?.[0] || null)} />
       <div className="flex gap-2 md:col-span-2"><Button disabled={busy}>{busy ? "Menyimpan…" : editing ? "Simpan perubahan" : "Tambah pendidikan"}</Button>{editing && <Button type="button" variant="outline" onClick={reset}>Batal</Button>}</div>
     </form>
-    <div className="grid gap-4 md:grid-cols-2">{items.map(item => <article key={item.id} className="flex items-center gap-4 rounded-xl border bg-white p-4 text-gray-900"><img src={item.name} alt="Logo institusi" className="h-16 w-16 rounded-full object-contain" /><div className="min-w-0 flex-1"><h2 className="font-semibold">{item.school}</h2><p>{item.major} · {item.date}</p></div><Button variant="outline" onClick={() => edit(item)}>Edit</Button><Button variant="destructive" onClick={() => remove(item.id)}>Hapus</Button></article>)}</div>
+    <div className="grid gap-4 md:grid-cols-2">{items.map(item => <article key={item.id} className="flex items-center gap-4 rounded-xl border bg-white p-4 text-gray-900"><Image src={item.name} alt="Logo institusi" width={64} height={64} unoptimized className="h-16 w-16 rounded-full object-contain" /><div className="min-w-0 flex-1"><h2 className="font-semibold">{item.school}</h2><p>{item.major} · {item.date}</p></div><Button variant="outline" onClick={() => edit(item)}>Edit</Button><Button variant="destructive" onClick={() => remove(item.id)}>Hapus</Button></article>)}</div>
     {toast && <Toast message={toast.message} type={toast.type} />}
   </div>;
 }

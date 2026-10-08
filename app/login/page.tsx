@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from "next/link";
 import { Suspense } from "react";
 import Loading from '../_components/Loading';
 import InputForm from './_components/InputForm'
@@ -16,7 +17,7 @@ const loginPage = () => {
           </h1>
         </div>
         <InputForm />
-        <p className="mt-5 text-sm dark:text-white">Belum punya akun? <a className="font-semibold underline" href="/register">Daftar gratis</a></p>
+        <p className="mt-5 text-sm dark:text-white">Belum punya akun? <Link className="font-semibold underline" href="/register">Daftar gratis</Link></p>
       </div>
     </Suspense>
   );

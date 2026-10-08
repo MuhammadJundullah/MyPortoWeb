@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Toast } from "@/app/login/_components/Toast";
+import Image from "next/image";
 
 type Profile = { username: string; name: string; email: string; phone: string; photo: string | null; instagram: string; twitter: string; linkedin: string; github: string; upwork: string };
 
@@ -46,7 +47,7 @@ export default function ProfileSettings() {
       <label className="font-medium">GitHub URL<Input name="github" type="url" value={profile.github} onChange={e => setProfile({ ...profile, github: e.target.value })} placeholder="https://github.com/username" /></label>
       <label className="font-medium">Upwork URL<Input name="upwork" type="url" value={profile.upwork} onChange={e => setProfile({ ...profile, upwork: e.target.value })} placeholder="https://www.upwork.com/freelancers/…" /></label>
       <label className="font-medium">Foto profil<Input type="file" accept="image/*" onChange={e => setPhoto(e.target.files?.[0] || null)} /></label>
-      {preview && <img src={preview} alt="Foto profil" className="h-24 w-24 rounded-full object-cover" />}
+      {preview && <Image src={preview} alt="Foto profil" width={96} height={96} unoptimized className="h-24 w-24 rounded-full object-cover" />}
       <div className="sm:col-span-2"><Button disabled={saving}>{saving ? "Menyimpan…" : "Simpan identitas"}</Button></div>
     </form>
     {toast && <Toast message={toast.message} type={toast.type} />}
