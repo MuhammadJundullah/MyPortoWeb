@@ -13,7 +13,7 @@ const fontMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MyPorto — Portofolio Praktis dan Mudah Dibagikan",
+  title: "MyPorto - Portofolio Praktis dan Mudah Dibagikan",
   description: "Buat portofolio online sederhana untuk menampilkan proyek, pengalaman, dan perjalanan profesionalmu. Bagikan dengan satu tautan.",
   verification : {
     google: "7feoSet_bBh3tPsyrc3rt6_PfSU1keiHDQiqheFNHso",

@@ -7,14 +7,7 @@ import Loading from "@/app/_components/Loading";
 import StatusDropdown from "../_components/StatusDropdown";
 import { SquarePen, Delete } from "lucide-react";
 import Header from "@/app/admin/_components/Header";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Toast } from "@/app/login/_components/Toast";
 import { ProjectsType } from "@/lib/type";
@@ -209,13 +202,14 @@ const ManageProjects = () => {
               className="h-full flex flex-col dark:bg-gray-600 dark:text-white">
               <CardHeader>
                 <CardTitle>{project.judul}</CardTitle>
-                <CardDescription className="dark:text-white">
-                  {project.tech || "Proyek"}
-                </CardDescription>
               </CardHeader>
 
               <CardContent className="flex-grow">
                 <div className="space-y-4">
+                  {typeof project.photo === "string" && project.photo && (
+                    <img src={project.photo} alt={project.judul} className="h-40 w-full rounded-md object-cover" />
+                  )}
+                  {project.desc && <p className="line-clamp-3 text-sm">{project.desc.replace(/<[^>]*>/g, " ")}</p>}
                   <div className="flex items-center justify-start gap-3 pb-5">
                     <span className="text-sm text-gray-500 dark:text-white">
                       Status:
@@ -228,18 +222,6 @@ const ManageProjects = () => {
                     />
                   </div>
 
-                  <div className="text-sm">
-                    <p className="text-gray-500 dark:text-white">
-                      Terakhir diperbarui:
-                    </p>
-                    <p>
-                      {new Date(project.updatedAt).toLocaleDateString("id-ID", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </p>
-                  </div>
                 </div>
               </CardContent>
 

@@ -23,7 +23,7 @@ export default function Educations({ data }: EducationsProps) {
         </span>
         <div className="my-12 sm:mx-auto mx-2 w-full max-w-4xl">
           {educations.length === 0 ? (
-            <p className="text-gray-500 dark:text-gray-300">No education history to display yet.</p>
+            <p className="text-gray-500 dark:text-gray-300 text-center">No education history to display yet.</p>
           ) : (
             <ol className="space-y-8">
               {educations.map((education, index) => (

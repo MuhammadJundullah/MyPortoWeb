@@ -1,10 +1,8 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
 import { useEffect, useState, use } from "react";
 import Loading from "@/app/_components/Loading";
 import { useRouter } from "next/navigation";
-import { Label } from "@/components/ui/label";
 import { useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Toast } from "@/app/login/_components/Toast";
@@ -171,18 +169,6 @@ export default function EditProject({
             required
           />
 
-          <div className="grid w-full gap-1.5">
-            <Label htmlFor="tech">URL Repository Github</Label>
-            <Input
-              type="text"
-              placeholder="URL Repository Github"
-              name="url"
-              value={project.url}
-              onChange={handleChange}
-              className="dark:placeholder:text-white dark:text-white"
-            />
-          </div>
-
           <UpdatePhotoInput
             id="photo"
             label="Ubah Foto"
@@ -190,28 +176,6 @@ export default function EditProject({
             image={project.photo || null}
             onChange={handleFileChange}
             alt="Project Photo"
-          />
-
-          <TextInput
-            id="tech"
-            label="Teknologi terkait (framework dsb.)"
-            type="text"
-            name="tech"
-            value={project.tech}
-            onChange={handleChange}
-            placeholder="Teknologi terkait. ex Laravel, MongoDB, Next.js, etc."
-            required
-          />
-
-          <TextInput
-            id="site"
-            label="URL Deploy/Dashboard link"
-            type="text"
-            name="site"
-            value={project.site}
-            onChange={handleChange}
-            placeholder="URL Deploy/Dashboard link."
-            required
           />
 
           <SelectInput

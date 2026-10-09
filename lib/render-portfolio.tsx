@@ -19,7 +19,7 @@ export async function RenderPortfolio({ ownerId, username }: { ownerId: number |
   ]);
 
   return <>
-    <Hello data={{ role: about?.role || "", name: profile?.name || "Sayid Muhammad Jundullah", photo: profile ? (profile.photo || "/avatar.svg") : "/static-image/IMG_3515.jpeg", linkedin: profile?.linkedin, github: profile?.github }} />
+    <Hello data={{ role: about?.role || "", name: profile?.name || "Sayid Muhammad Jundullah", photo: profile?.photo || null, linkedin: profile?.linkedin, github: profile?.github }} />
     <About data={{ id: about ? String(about.id) : "", about: about?.about || "", what_i_do: about?.what_i_do || "", role: about?.role || "" }} email={profile ? (profile.email || "") : "sayidmuhammad15@gmail.com"} phone={profile ? (profile.phone || "") : "628385329175"} />
     <WorkExperiences data={experiences.map((experience) => ({ experience_id: String(experience.id), company_name: experience.company_name, position: experience.position, duration: experience.duration, type: experience.type, jobdesks: experience.jobdesks }))} />
     <Projects data={projects.map((project) => ({ ...project, url: project.url || "", photo: project.photo, tech: project.tech || "", site: project.site || "", desc: project.desc || "", slug: "", categoryslug: "", createdAt: project.createdAt?.toISOString() || "", updatedAt: project.updatedAt?.toISOString() || "", status: project.status === "published" ? "published" : "archived" } as ProjectsType))} username={username} />

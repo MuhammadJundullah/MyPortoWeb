@@ -8,12 +8,8 @@ import { getOwnerId, getReadOwnerId } from "@/lib/portfolio-owner";
 
 const projectSchema = z.object({
   judul: z.string().min(1, "Judul is required"),
-  category: z.string().optional(),
   desc: z.string().optional(),
-  status: z.string().optional(),
-  url: z.string().optional(),
-  tech: z.string().optional(),
-  site: z.string().optional(),
+  status: z.enum(["published", "archived"]),
 });
 
 const patchProjectSchema = z.object({
@@ -39,25 +35,24 @@ export async function POST(req: NextRequest) {
 
     const parsed = projectSchema.safeParse({
       judul: formData.get("judul"),
-      category: formData.get("category") || "General",
       desc: formData.get("desc"),
       status: formData.get("status"),
-      url: formData.get("url"),
-      tech: formData.get("tech"),
-      site: formData.get("site"),
     });
 
     if (!parsed.success) {
       return handleError(parsed.error.flatten().fieldErrors, "Invalid input", 400);
     }
 
-    const photo = formData.get("photo") as File;
+    const photo = formData.get("photo");
+    if (!(photo instanceof File) || photo.size === 0) {
+      return handleError(null, "Foto proyek wajib dilampirkan", 400);
+    }
     const photoUrl = await uploadToCloudinary(photo, "myporto/projects");
 
     await prisma.projects.create({
       data: {
         ...parsed.data,
-        category: parsed.data.category || "General",
+        category: "General",
         photo: photoUrl,
         ownerId,
       },
@@ -137,19 +132,16 @@ export async function PUT(req: NextRequest) {
     const formData = await req.formData();
     const parsed = projectSchema.safeParse({
       judul: formData.get("judul"),
-      category: formData.get("category") || "General",
       desc: formData.get("desc"),
       status: formData.get("status"),
-      url: formData.get("url"),
-      tech: formData.get("tech"),
-      site: formData.get("site"),
     });
 
     if (!parsed.success) {
       return handleError(parsed.error.flatten().fieldErrors, "Invalid input", 400);
     }
 
-    const newPhotoFile = formData.get("photo") as File | null;
+    const photoEntry = formData.get("photo");
+    const newPhotoFile = photoEntry instanceof File && photoEntry.size > 0 ? photoEntry : null;
     const deletePhotoExplicitly = formData.get("deletePhoto") === "true";
 
     const updatedProject = await prisma.$transaction(async (tx) => {
@@ -181,7 +173,6 @@ export async function PUT(req: NextRequest) {
         },
         data: {
           ...parsed.data,
-          category: parsed.data.category || "General",
           photo: finalPhotoUrl,
         },
       });

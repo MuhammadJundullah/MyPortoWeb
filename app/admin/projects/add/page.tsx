@@ -34,10 +34,7 @@ export default function AddProject() {
 
   const [project, setProject] = useState({
     judul: "",
-    url: "",
     photo: null as File | null,
-    tech: "",
-    site: "",
     status: "",
     desc: "",
   });
@@ -72,6 +69,11 @@ export default function AddProject() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!project.photo) {
+      showToast("Foto proyek wajib dilampirkan.", "error");
+      return;
+    }
+
     if (!window.confirm("Apakah Anda yakin ingin menambahkan project?")) {
       return;
     }
@@ -85,9 +87,6 @@ export default function AddProject() {
       formData.append("judul", project.judul);
       formData.append("desc", project.desc);
       formData.append("status", project.status);
-      formData.append("url", project.url);
-      formData.append("tech", project.tech);
-      formData.append("site", project.site);
 
       // Menambahkan file photo jika ada
       if (project.photo) {
@@ -109,10 +108,7 @@ export default function AddProject() {
       showToast("Project has been added successfully!", "success");
       setProject({
         judul: "",
-        url: "",
         photo: null,
-        tech: "",
-        site: "",
         status: "",
         desc: "",
       });
@@ -151,16 +147,6 @@ export default function AddProject() {
               required
             />
 
-            <TextInput
-              id="url"
-              label="URL Repository Github"
-              type="text"
-              name="url"
-              value={project.url}
-              onChange={handleChange}
-              placeholder="URL Repository Github"
-            />
-
             <PhotoUpload
               id="image"
               label="Lampirkan Foto"
@@ -168,28 +154,6 @@ export default function AddProject() {
               onChange={handleFileChange}
               accept="image/png, image/jpeg"
               hint="*Hanya format .png atau .jpeg"
-            />
-
-            <TextInput
-              id="tech"
-              label="Teknologi terkait (framework dsb.)"
-              type="text"
-              name="tech"
-              value={project.tech}
-              onChange={handleChange}
-              placeholder="Teknologi terkait. ex Laravel, Next.js, etc."
-              required
-            />
-
-            <TextInput
-              id="site"
-              label="URL Deploy/Dashboard link"
-              type="text"
-              name="site"
-              value={project.site}
-              onChange={handleChange}
-              placeholder="URL Deploy/Dashboard link."
-              required
             />
 
             <SelectInput

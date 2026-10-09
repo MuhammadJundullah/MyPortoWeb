@@ -7,7 +7,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex items-end">
           <NavMenu />
         </div>
-        <div className="border-b border-gray-300 lg:w-full  sm:block md:block lg:block hidden mt-5" />
+        <div className="border-b border-gray-300 lg:w-full sm:block md:block lg:block hidden mt-5" />
       </div>
       {children}
     </main>

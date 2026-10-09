@@ -17,7 +17,7 @@ export default function NavMenu() {
   useEffect(() => { fetch("/api/auth/session").then(r => r.json()).then(s => setUsername(s?.user?.username || "")); }, []);
   return <nav className="w-full py-3 dark:text-white">
     <div className="flex flex-wrap items-center justify-between gap-4">
-      <Link href="/admin/projects" className="font-bold">MyPorto Dashboard</Link>
+      <Link href="/admin/projects" className="font-bold text-4xl">MyPorto Dashboard</Link>
       <div className="flex flex-wrap items-center gap-4 text-sm">
         {username && <Link href={`/${username}`} target="_blank" className="underline">Lihat portofolio</Link>}
         <button onClick={() => signOut({ callbackUrl: "/login" })} className="rounded bg-black px-4 py-2 text-white">Keluar</button>
