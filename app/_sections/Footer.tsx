@@ -7,17 +7,17 @@ const Footer = ({ name = "Sayid", instagram, twitter }: { name?: string; instagr
       <footer>
         <div className="flex justify-between items-center md:mx-auto mx-5 max-w-6xl sm:space-y-3 sm:py-5 py-3 border-t">
           <div>
-            <p className="text-sm text-gray-400 dark:text-white py-2">
+            <p className="sm:text-sm text-xs text-gray-400 dark:text-white py-2">
               Last updated on Oct 8, 2026
             </p>
             <div>
-              <p className="sm:text-xl text-3xs text-gray-900 dark:text-white">
+              <p className="sm:text-xl text-xs text-gray-900 dark:text-white">
                 {name}. &copy; {new Date().getFullYear()}
               </p>
             </div>
           </div>
           <ul className="flex justify-start gap-6 sm:justify-end dark:text-white text-gray-900">
-            <li><Link href="/register" className="text-sm underline transition hover:opacity-75">Buat portofolio</Link></li>
+            <li><Link href="/register" className="text-sm hidden sm:block underline transition hover:opacity-75">Buat portofolio</Link></li>
             <li><Link href="/login" className="text-sm underline transition hover:opacity-75">Masuk</Link></li>
             {instagram && <li>
               <a

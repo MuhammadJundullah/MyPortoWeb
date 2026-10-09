@@ -28,7 +28,7 @@ const HeaderScroll = ({ name, linkedin, github }: { name: string; linkedin?: str
   return (
     <div
       className={`
-        flex flex-row justify-between fixed top-4 left-1/2 -translate-x-1/2 sm:text-3xl text-lg font-bold sm:w-6xl w-xs z-1 text-gray-500 dark:text-white dark:bg-gray-900 rounded-4xl px-7 items-center sm:mx-0 mx-3 sm:py-6 py-3 transition-all duration-300
+        flex flex-row justify-between fixed top-4 left-1/2 -translate-x-1/2 sm:text-3xl text-lg font-bold sm:w-6xl w-xs z-1 text-gray-500 dark:text-white dark:bg-gray-900 rounded-4xl px-7 items-center sm:mx-0 sm:py-6 py-3 transition-all duration-300
         ${
           scrolled
             ? "bg-gray-600/70 text-white backdrop-blur-xl blur-3xl opacity-0 hover:opacity-100 hover:blur-none duration-500"

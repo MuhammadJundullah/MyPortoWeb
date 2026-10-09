@@ -31,7 +31,7 @@ const Hello = (data: dataType) => {
 
   return (
     <section id="hello">
-      <div className="relative flex min-h-screen items-center justify-center px-20 py-20 sm:py-24">
+      <div className="relative flex min-h-screen items-center justify-center px-20 py-30 sm:py-24">
         <HeaderScroll name={data.data.name} linkedin={data.data.linkedin} github={data.data.github} />
         <div className="flex w-full max-w-6xl flex-col items-center gap-10 text-center md:flex-row md:gap-16 md:text-left">
           {data.data.photo ? (
@@ -59,7 +59,7 @@ const Hello = (data: dataType) => {
               <BlurText
                 text={`Hello 👋, i am ${data.data.name}${data.data.role ? `, ${data.data.role}` : ""}`}
                 delay={150}
-                className="text-center text-3xl font-bold md:text-left md:text-4xl"
+                className="text-center text-2xl font-bold md:text-left md:text-4xl"
                 animateBy="words"
                 direction="top"
               />
