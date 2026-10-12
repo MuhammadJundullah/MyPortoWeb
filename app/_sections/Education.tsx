@@ -21,33 +21,33 @@ export default function Educations({ data }: EducationsProps) {
           </span>
           <span className="h-px flex-1 bg-gray-300"></span>
         </span>
-        <div className="my-12 sm:mx-auto mx-2 w-full max-w-4xl">
+        <div className="my-12 w-full max-w-4xl">
           {educations.length === 0 ? (
             <p className="text-gray-500 dark:text-gray-300 text-center">No education history to display yet.</p>
           ) : (
-            <ol className="space-y-8">
+            <ol className="space-y-12">
               {educations.map((education, index) => (
                 <li key={`${education.school}-${index}`} className="relative flex gap-5 pl-8">
                   {index < educations.length - 1 && (
-                    <span aria-hidden="true" className="absolute left-[5px] top-1.5 h-[calc(100%+2rem)] w-0.5 bg-gray-200 dark:bg-gray-700" />
+                    <span aria-hidden="true" className="absolute left-[5px] top-2 h-[calc(100%+3.25rem)] w-0.5 bg-gray-200 dark:bg-gray-700" />
                   )}
-                  <span aria-hidden="true" className="absolute left-0 top-1.5 size-3 rounded-full bg-gray-800 dark:bg-white" />
+                  <span aria-hidden="true" className="absolute left-0 top-2 size-3 rounded-full bg-gray-800 dark:bg-white" />
                   <Image
                     src={education.name}
                     alt={`${education.school} logo`}
-                    width={96}
-                    height={96}
+                    width={128}
+                    height={128}
                     unoptimized
-                    className="size-16 shrink-0 rounded-full border border-gray-200 bg-white object-contain p-1 sm:size-24"
+                    className="size-20 shrink-0 rounded-full border border-gray-200 bg-white object-contain p-1 sm:size-32"
                   />
                   <div className="min-w-0 pb-1">
-                    <h3 className="text-xl font-bold text-gray-800 dark:text-white sm:text-3xl">
+                    <h3 className="text-2xl font-bold text-gray-800 dark:text-white sm:text-4xl">
                       {education.school}
                     </h3>
-                    <p className="mt-1 text-lg text-gray-600 dark:text-gray-300 sm:text-xl">
+                    <p className="mt-1 text-xl text-gray-600 dark:text-gray-300 sm:text-2xl">
                       {education.major}
                     </p>
-                    <time className="mt-1 block text-base text-gray-500 dark:text-gray-400 sm:text-lg">
+                    <time className="mt-1 block text-lg text-gray-500 dark:text-gray-400 sm:text-xl">
                       {education.date}
                     </time>
                   </div>
