@@ -35,19 +35,19 @@ export default function Educations({ data }: EducationsProps) {
                   <Image
                     src={education.name}
                     alt={`${education.school} logo`}
-                    width={72}
-                    height={72}
+                    width={96}
+                    height={96}
                     unoptimized
-                    className="size-14 shrink-0 rounded-full border border-gray-200 bg-white object-contain p-1 sm:size-[72px]"
+                    className="size-16 shrink-0 rounded-full border border-gray-200 bg-white object-contain p-1 sm:size-24"
                   />
                   <div className="min-w-0 pb-1">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white sm:text-2xl">
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-white sm:text-3xl">
                       {education.school}
                     </h3>
-                    <p className="mt-1 text-base text-gray-600 dark:text-gray-300 sm:text-lg">
+                    <p className="mt-1 text-lg text-gray-600 dark:text-gray-300 sm:text-xl">
                       {education.major}
                     </p>
-                    <time className="mt-1 block text-sm text-gray-500 dark:text-gray-400 sm:text-base">
+                    <time className="mt-1 block text-base text-gray-500 dark:text-gray-400 sm:text-lg">
                       {education.date}
                     </time>
                   </div>

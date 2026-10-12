@@ -43,8 +43,8 @@ export default function CertificatesComponent({ data }: CertificatesProps) {
           </span>
           <span className="h-px flex-1 bg-gray-300 "></span>
         </span>
-        <div className="my-20 sm:mx-100 mx-10">
-          <div className="flex flex-wrap justify-center gap-5">
+        <div className="my-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {certificates.length === 0 ? (
               <p className="text-gray-500 dark:text-gray-300">No certificates to display yet.</p>
             ) : (
@@ -59,7 +59,7 @@ export default function CertificatesComponent({ data }: CertificatesProps) {
                 return (
                   <div
                     key={i}
-                    className="hover:scale-105 transition-all duration-300 ease-in-out"
+                    className="w-full hover:scale-105 transition-all duration-300 ease-in-out"
                     onClick={() =>
                       openModal(imageUrl, certificate.name, certificate.site)
                     }>
@@ -76,7 +76,7 @@ export default function CertificatesComponent({ data }: CertificatesProps) {
                           alt={certificate.name}
                           width={345}
                           height={140}
-                          className="rounded-lg shadow-lg cursor-pointer"
+                          className="w-full rounded-lg shadow-lg cursor-pointer"
                           style={{ objectFit: "cover" }}
                         />
                         <div className="mx-auto mt-4 items-center justify-center text-center mb-7">
