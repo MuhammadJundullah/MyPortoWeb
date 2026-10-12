@@ -37,6 +37,7 @@ export default function AddProject() {
     photo: null as File | null,
     status: "",
     desc: "",
+    tech: "",
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,6 +87,7 @@ export default function AddProject() {
       // Menambahkan field-text ke FormData
       formData.append("judul", project.judul);
       formData.append("desc", project.desc);
+      formData.append("tech", project.tech);
       formData.append("status", project.status);
 
       // Menambahkan file photo jika ada
@@ -111,6 +113,7 @@ export default function AddProject() {
         photo: null,
         status: "",
         desc: "",
+        tech: "",
       });
     } catch {
       setIsLoading(false);
@@ -175,6 +178,15 @@ export default function AddProject() {
               onChange={handleTextareaChange}
               placeholder="Project Description."
               required
+            />
+            <TextInput
+              id="tech"
+              label="Tools yang digunakan (pisahkan dengan koma)"
+              type="text"
+              name="tech"
+              value={project.tech}
+              onChange={handleChange}
+              placeholder="React, TypeScript, PostgreSQL"
             />
           </div>
 

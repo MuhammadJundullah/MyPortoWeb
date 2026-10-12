@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback, useRef } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Loading from "@/app/_components/Loading";
 import StatusDropdown from "../_components/StatusDropdown";
@@ -252,14 +253,14 @@ const ManageCertificates = () => {
                   Hapus
                 </Button>
 
-                {/* <Link href={`/admin/certificates/edit/${certificate.id}`}> */}
+                <Link href={`/admin/certificates/edit/${certificate.id}`}>
                 <Button
                   variant="outline"
                   className="flex items-center gap-2 border-gray-300">
                   <SquarePen size={16} />
                   Edit
                 </Button>
-                {/* </Link> */}
+                </Link>
               </CardFooter>
             </Card>
           ))}

@@ -115,10 +115,8 @@ export default function EditProject({
       // Append semua field text
       formData.append("judul", project.judul);
       formData.append("desc", project.desc || "");
-      formData.append("status", project.status || "");
-      formData.append("url", project.url || "");
       formData.append("tech", project.tech || "");
-      formData.append("site", project.site || "");
+      formData.append("status", project.status || "");
 
       // Append file hanya jika itu File object (foto baru)
       if (project.photo instanceof File) {
@@ -197,6 +195,15 @@ export default function EditProject({
             onChange={handleTextareaChange}
             placeholder="Project Description."
             required
+          />
+          <TextInput
+            id="tech"
+            label="Tools yang digunakan (pisahkan dengan koma)"
+            type="text"
+            name="tech"
+            value={project.tech || ""}
+            onChange={handleChange}
+            placeholder="React, TypeScript, PostgreSQL"
           />
         </div>
         <SubmitButton label="Simpan Perubahan" onClick={handleSubmit} />

@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const parsed = techStackSchema.safeParse({
       name: formData.get("name"),
-      description: formData.get("description"),
+      description: formData.get("description")?.toString() || "",
     });
 
     if (!parsed.success) {

@@ -9,6 +9,7 @@ import { getOwnerId, getReadOwnerId } from "@/lib/portfolio-owner";
 const projectSchema = z.object({
   judul: z.string().min(1, "Judul is required"),
   desc: z.string().optional(),
+  tech: z.string().optional(),
   status: z.enum(["published", "archived"]),
 });
 
@@ -36,6 +37,7 @@ export async function POST(req: NextRequest) {
     const parsed = projectSchema.safeParse({
       judul: formData.get("judul"),
       desc: formData.get("desc"),
+      tech: formData.get("tech") || "",
       status: formData.get("status"),
     });
 
@@ -133,6 +135,7 @@ export async function PUT(req: NextRequest) {
     const parsed = projectSchema.safeParse({
       judul: formData.get("judul"),
       desc: formData.get("desc"),
+      tech: formData.get("tech") || "",
       status: formData.get("status"),
     });
 

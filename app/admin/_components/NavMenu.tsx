@@ -6,6 +6,7 @@ import { signOut } from "next-auth/react";
 
 const items = [
   ["Projects", "/admin/projects"],
+  ["Tools & Technologies", "/admin/techstacks"],
   ["About & profile", "/admin/about"],
   ["Experience", "/admin/work-experiences"],
   ["Certificates", "/admin/certificates"],

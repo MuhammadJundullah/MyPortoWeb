@@ -2,8 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { fetchDataFromAPI } from "@/lib/actions";
 import Image from "next/image";
-import { FaArrowLeft, FaExternalLinkAlt, FaGithub } from "react-icons/fa";
-import { FaSquareUpwork } from "react-icons/fa6";
+import { FaArrowLeft } from "react-icons/fa";
 import { ProjectsType } from "@/lib/type";
 import { notFound } from "next/navigation";
 
@@ -15,7 +14,6 @@ export default async function Page({ params, searchParams }: {
 
   const res = await fetchDataFromAPI(id, username);
   const data: ProjectsType[] = res.data;
-  const upworkUrl = res.upworkUrl;
 
   if (
     !data ||
@@ -89,10 +87,10 @@ export default async function Page({ params, searchParams }: {
           {/* Right Column - Project Details */}
           <div className="lg:col-span-1">
             <div className="sticky top-8 space-y-6">
-              {/* Tech Stack */}
+              {/* Tools */}
               <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/50 dark:border-gray-700/50 shadow-sm">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                  Tech Stack
+                  Tools
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {(item.tech || "").split(",").filter(Boolean).map((tech, index) => (
@@ -102,69 +100,6 @@ export default async function Page({ params, searchParams }: {
                       {tech.trim()}
                     </span>
                   ))}
-                </div>
-              </div>
-
-              {/* Project Links */}
-              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/50 dark:border-gray-700/50 shadow-sm">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                  Project Links
-                </h3>
-                <div className="space-y-3">
-                  {/* Live Site */}
-                  <div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
-                      Live Site
-                    </p>
-                    {item.site && item.site !== "#" ? (
-                      <a
-                        href={item.site}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        <FaExternalLinkAlt className="w-4 h-4" />
-                        <span className="truncate">
-                          {item.site.replace(/^https?:\/\//, "")}
-                        </span>
-                      </a>
-                    ) : (
-                      <span className="text-slate-400 dark:text-slate-500 text-sm">
-                        Not Available
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Source Code */}
-                  <div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
-                      Source Code
-                    </p>
-                    {item.url && item.url !== "#" ? (
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        <FaGithub className="w-4 h-4" />
-                        <span className="truncate">GitHub Repository</span>
-                      </a>
-                    ) : (
-                      <span className="text-slate-400 dark:text-slate-500 text-sm">
-                        Not Available
-                      </span>
-                    )}
-                  </div>
-                   {upworkUrl && <div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Let’s build your next website together! </p>
-                      <a
-                        href={upworkUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        <FaSquareUpwork className="w-4 h-4" />
-                        <span className="truncate">Hire me on Upwork.</span>
-                      </a>
-                  </div>}
                 </div>
               </div>
             </div>

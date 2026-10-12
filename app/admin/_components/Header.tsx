@@ -57,7 +57,7 @@ const Header = forwardRef<HTMLInputElement, HeaderProps>(
               href={newLink}
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-400 hover:text-gray-900 hover:cursor-pointer">
               <FilePlus />
-              <span className="w-19">New {dynamicText.slice(0, -1)}</span>
+              <span className="w-19">{dynamicText === "Tools & Technologies" ? "New Tool" : `New ${dynamicText.slice(0, -1)}`}</span>
             </Link>
             <button
               onClick={handleRevalidate}

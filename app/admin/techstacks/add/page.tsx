@@ -5,7 +5,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Toast } from "@/app/login/_components/Toast";
 import Loading from "@/app/_components/Loading";
 import TextInput from "@/app/admin/_components/TextInput";
-import TextAreaInput from "../../_components/TextAreaInput";
 import PhotoUpload from "../../_components/PhotoUpload";
 import BackButton from "../../_components/BackButton";
 import SubmitButton from "../../_components/SubmitButton";
@@ -33,7 +32,6 @@ export default function AddTechstack() {
 
   const [techstack, setTechstack] = useState({
     name: "",
-    description: "",
     image: null as File | null,
   });
 
@@ -62,7 +60,7 @@ export default function AddTechstack() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!window.confirm("Apakah Anda yakin ingin menambahkan techstack?")) {
+    if (!window.confirm("Apakah Anda yakin ingin menambahkan tool ini?")) {
       return;
     }
 
@@ -71,7 +69,6 @@ export default function AddTechstack() {
       const formData = new FormData();
 
       formData.append("name", techstack.name);
-      formData.append("description", techstack.description);
 
       if (techstack.image) {
         formData.append("image", techstack.image);
@@ -88,10 +85,9 @@ export default function AddTechstack() {
       }
 
       setIsLoading(false);
-      showToast("Techstack has been added successfully!", "success");
+      showToast("Tool berhasil ditambahkan.", "success");
       setTechstack({
         name: "",
-        description: "",
         image: null,
       });
     } catch {
@@ -119,7 +115,7 @@ export default function AddTechstack() {
           <div className="flex flex-col gap-8">
             <TextInput
               id="name"
-              label="Nama Techstack"
+              label="Nama tool atau teknologi"
               type="text"
               name="name"
               value={techstack.name}
@@ -128,19 +124,9 @@ export default function AddTechstack() {
               required
             />
 
-            <TextAreaInput
-              id="description"
-              label="Deskripsi"
-              name="description"
-              value={techstack.description}
-              onChange={handleChange}
-              placeholder="Master in this tech stack, because has 3 projects using this techstack."
-              required
-            />
-
             <PhotoUpload
               id="project-image"
-              label="Logo techstack"
+              label="Logo tool atau teknologi"
               name="image"
               onChange={handleFileChange}
               accept="image/png, image/jpeg"
@@ -149,7 +135,7 @@ export default function AddTechstack() {
             />
           </div>
 
-          <SubmitButton label="Tambah techstack" onClick={handleSubmit} />
+          <SubmitButton label="Tambah tool" onClick={handleSubmit} />
         </form>
       )}
       {toast && <Toast message={toast.message} type={toast.type} />}

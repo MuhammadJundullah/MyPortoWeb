@@ -11,7 +11,6 @@ import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
   CardFooter,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -47,7 +46,7 @@ const ManageTechstacks = () => {
     const fetchData = async () => {
       try {
         const response = await fetch("/api/techstacks");
-        if (!response.ok) throw new Error("Gagal memuat data techstack");
+        if (!response.ok) throw new Error("Gagal memuat tools dan teknologi");
         const data = await response.json();
         setTechstacks(data.data);
         setFilteredTechstacks(data.data);
@@ -90,7 +89,7 @@ const ManageTechstacks = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Yakin ingin menghapus techstack ini?")) return;
+    if (!confirm("Yakin ingin menghapus tool ini?")) return;
 
     try {
       setIsLoading(true);
@@ -101,7 +100,7 @@ const ManageTechstacks = () => {
       if (response.ok) {
         setIsLoading(false);
         handleRefresh();
-        showToast("Techstacks has been deleted successfully!", "success");
+        showToast("Tool berhasil dihapus.", "success");
       }
     } catch (err) {
       setIsLoading(false);
@@ -127,7 +126,7 @@ const ManageTechstacks = () => {
 
       const data = await res.json();
       if (data.success) {
-        showToast("Static Techstack Data has been revalidating!", "success");
+        showToast("Data tools berhasil diperbarui.", "success");
       }
     } catch (err) {
       alert("Failed to revalidate " + err);
@@ -137,7 +136,7 @@ const ManageTechstacks = () => {
   return (
     <div className="mx-auto sm:px-4 max-w-6xl min-h-screen">
       <Header
-        dynamicText="Techstacks"
+        dynamicText="Tools & Technologies"
         searchKeyword={searchKeyword}
         setSearchKeyword={setSearchKeyword}
         ref={searchInputRef}
@@ -160,8 +159,8 @@ const ManageTechstacks = () => {
           <div className="py-10">
             <p className="text-gray-500 py-20 dark:text-white">
               {searchKeyword
-                ? "Tidak ada Techstack yang cocok."
-                : "Belum ada Techstack."}
+                ? "Tidak ada tools yang cocok."
+                : "Belum ada tools."}
             </p>
           </div>
         </div>
@@ -181,9 +180,6 @@ const ManageTechstacks = () => {
 
               <CardHeader>
                 <CardTitle>{techstack.name}</CardTitle>
-                <CardDescription className="">
-                  {techstack.description}
-                </CardDescription>
               </CardHeader>
 
               <CardFooter className="flex justify-center gap-2">

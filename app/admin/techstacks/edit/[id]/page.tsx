@@ -9,7 +9,6 @@ import { Toast } from "@/app/login/_components/Toast";
 import SubmitButton from "@/app/admin/_components/SubmitButton";
 import { TechStackType } from "@/lib/type";
 import TextInput from "@/app/admin/_components/TextInput";
-import TextAreaInput from "@/app/admin/_components/TextAreaInput";
 import UpdatePhotoInput from "@/app/admin/_components/UpdatePhotoInput";
 import BackButton from "@/app/admin/_components/BackButton";
 
@@ -44,11 +43,13 @@ export default function EditTechStack({
         setIsLoading(true);
         const res = await fetch(`/api/techstacks?id=${id}`);
 
-        if (!res.ok) throw new Error("Failed to fetch techstack");
+        if (!res.ok) throw new Error("Gagal memuat tool");
 
         const data = await res.json();
 
-        setTechStack(data.data[0]);
+        const tool = Array.isArray(data.data) ? data.data[0] : data.data;
+        if (!tool) throw new Error("Tool tidak ditemukan.");
+        setTechStack(tool);
       } catch (error) {
         console.error("Error fetching techstack:", error);
         router.push("/error");
@@ -64,14 +65,19 @@ export default function EditTechStack({
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen mx-10  w-7xl">
+      <div className="flex min-h-[60vh] items-center justify-center">
         <Loading />
       </div>
     );
   }
 
   if (!techstack) {
-    return <div className="dark:text-white">TechStack not found</div>;
+    return (
+      <div className="mx-auto w-full max-w-3xl px-4 py-6 dark:text-white sm:px-6">
+        <BackButton href="/admin/techstacks" />
+        <p>Tool tidak ditemukan.</p>
+      </div>
+    );
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,9 +95,7 @@ export default function EditTechStack({
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setTechStack((prev) => (prev ? { ...prev, [name]: value } : prev));
   };
@@ -106,7 +110,6 @@ export default function EditTechStack({
       const formData = new FormData();
 
       formData.append("name", techstack.name);
-      formData.append("description", techstack.description);
 
       if (techstack.image instanceof File) {
         formData.append("image", techstack.image);
@@ -119,7 +122,7 @@ export default function EditTechStack({
 
       if (res.ok) {
         setIsLoading(false);
-        showToast("TechStack has been updated successfully!", "success");
+        showToast("Tool berhasil diperbarui.", "success");
       } else {
         const errorData = await res.json();
         setIsLoading(false);
@@ -128,35 +131,24 @@ export default function EditTechStack({
     } catch (error) {
       console.error("Error:", error);
       setIsLoading(false);
-      alert("Terjadi kesalahan saat mengupdate techstack");
+      showToast("Terjadi kesalahan saat memperbarui tool.", "error");
     }
   };
 
   return (
-    <div className="md:w-6xl flex flex-col justify-center text-black">
-      <div>
-        <BackButton href="/admin/techstacks" />
-      </div>
-      <form className="py-3">
-        <div className="flex flex-col gap-8">
+    <div className="mx-auto w-full max-w-6xl px-4 py-6 text-black sm:px-6">
+      <BackButton href="/admin/techstacks" />
+      <form onSubmit={handleSubmit} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900 sm:p-8">
+        <h1 className="mb-6 text-2xl font-semibold dark:text-white">Edit Tool</h1>
+        <div className="flex flex-col gap-6 dark:text-white">
           <TextInput
             id="techstack-name"
-            label="Nama Techstack"
+            label="Nama tool atau teknologi"
             type="text"
             name="name"
             value={techstack.name}
             onChange={handleChange}
-            placeholder="Python, Django, JavaScript, Node.js, etc."
-            required
-          />
-
-          <TextAreaInput
-            id="description"
-            label="Deskripsi"
-            name="description"
-            value={techstack.description}
-            onChange={handleChange}
-            placeholder="Master in this tech stack, because has 3 projects using this techstack."
+            placeholder="Contoh: Python, Django, JavaScript, Node.js"
             required
           />
 
@@ -166,10 +158,10 @@ export default function EditTechStack({
             name="image"
             image={techstack.image || "null"}
             onChange={handleFileChange}
-            alt="TechStack Photo"
+            alt={techstack.name}
           />
         </div>
-        <SubmitButton label="Simpan Perubahan" onClick={handleSubmit} />
+        <SubmitButton ref={buttonRef} label="Simpan Perubahan" onClick={() => {}} />
       </form>
       {toast && <Toast message={toast.message} type={toast.type} />}
     </div>

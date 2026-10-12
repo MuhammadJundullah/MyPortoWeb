@@ -31,12 +31,17 @@ export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const status = searchParams.get("status");
+    const idParam = searchParams.get("id");
     const ownerId = await getReadOwnerId(req);
     if (ownerId === undefined) return handleError(null, "Portfolio tidak ditemukan.", 404);
     const viewerOwnerId = await getOwnerId(req);
 
+    const id = idParam ? Number(idParam) : undefined;
+    if (idParam && (!Number.isInteger(id) || (ownerId !== null && viewerOwnerId !== ownerId))) {
+      return handleError(null, "Certificate not found.", 404);
+    }
     const certificates = await prisma.certificates.findMany({
-      where: { ownerId, status: ownerId !== null && viewerOwnerId === ownerId ? (status || undefined) : "published" },
+      where: { ownerId, id, status: ownerId !== null && viewerOwnerId === ownerId ? (status || undefined) : "published" },
       orderBy: [
         {
           status: "desc",
@@ -193,7 +198,14 @@ export async function PUT(req: NextRequest) {
       return handleError(null, "ID is required in query parameters.", 400);
     }
 
-    const data = await req.json();
+    const formData = await req.formData();
+    const data = {
+      name: formData.get("name")?.toString() || "",
+      desc: formData.get("desc")?.toString() || "",
+      date: formData.get("date")?.toString() || "",
+      site: formData.get("site")?.toString() || "",
+      status: formData.get("status")?.toString() || null,
+    };
 
     const parsed = certificateSchema.safeParse(data);
 
@@ -204,7 +216,19 @@ export async function PUT(req: NextRequest) {
     const certificateId = parseInt(id);
     const existing = await prisma.certificates.findFirst({ where: { id: certificateId, ownerId } });
     if (!existing) return handleError(null, "Certificate not found.", 404);
-    const certificate = await prisma.certificates.update({ where: { id: certificateId }, data: parsed.data });
+    const photo = formData.get("photo");
+    let photoUrl = existing.photo;
+    if (photo instanceof File && photo.size > 0) {
+      const uploadResult = await new Promise<{ secure_url: string }>((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream({ folder: "myporto/certificates" }, (error, result) => {
+          if (error || !result) reject(error || new Error("Photo upload failed"));
+          else resolve(result as { secure_url: string });
+        });
+        photo.arrayBuffer().then((bytes) => stream.end(Buffer.from(bytes)), reject);
+      });
+      photoUrl = uploadResult.secure_url;
+    }
+    const certificate = await prisma.certificates.update({ where: { id: certificateId }, data: { ...parsed.data, photo: photoUrl } });
 
     return apiResponse(true, certificate, "Certificate updated successfully.", 200);
   } catch (err) {
