@@ -228,7 +228,17 @@ export async function PUT(req: NextRequest) {
       });
       photoUrl = uploadResult.secure_url;
     }
-    const certificate = await prisma.certificates.update({ where: { id: certificateId }, data: { ...parsed.data, photo: photoUrl } });
+    const certificate = await prisma.certificates.update({
+      where: { id: certificateId },
+      data: {
+        name: parsed.data.name,
+        desc: parsed.data.desc ?? "",
+        date: parsed.data.date,
+        site: parsed.data.site,
+        status: parsed.data.status,
+        photo: photoUrl,
+      },
+    });
 
     return apiResponse(true, certificate, "Certificate updated successfully.", 200);
   } catch (err) {

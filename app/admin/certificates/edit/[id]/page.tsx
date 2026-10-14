@@ -35,17 +35,13 @@ export default function EditCertificate({ params }: { params: Promise<{ id: stri
       .finally(() => setIsLoading(false));
   }, [id, showToast]);
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!certificate) return;
     setIsLoading(true);
     try {
-      const body = new FormData();
-      body.append("name", certificate.name);
-      body.append("desc", certificate.desc || "");
-      body.append("date", certificate.date);
-      body.append("site", certificate.site);
-      body.append("status", certificate.status);
+      // Read the submitted values from the form to ensure the latest edits are saved.
+      const body = new FormData(event.currentTarget);
       if (photo) body.append("photo", photo);
       const response = await fetch(`/api/certificates?id=${id}`, { method: "PUT", body });
       if (!response.ok) {
