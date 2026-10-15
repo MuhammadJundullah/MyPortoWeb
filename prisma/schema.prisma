@@ -20,7 +20,7 @@ model Projects {
   ownerId   Int?      @map("owner_id")
   owner     Users?    @relation(fields: [ownerId], references: [id], onDelete: SetNull)
   createdAt DateTime? @default(now()) @map("created_at")
-  updatedAt DateTime? @default(now()) @map("updated_at")
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
 
   @@index([ownerId])
 }
@@ -36,7 +36,7 @@ model Certificates {
   ownerId   Int?      @map("owner_id")
   owner     Users?    @relation(fields: [ownerId], references: [id], onDelete: SetNull)
   createdAt DateTime? @default(now()) @map("created_at")
-  updatedAt DateTime? @default(now()) @map("updated_at")
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
 
   @@index([ownerId])
 }
@@ -63,7 +63,7 @@ model Experiences {
   ownerId      Int?      @map("owner_id")
   owner        Users?    @relation(fields: [ownerId], references: [id], onDelete: SetNull)
   createdAt    DateTime? @default(now()) @map("created_at")
-  updatedAt    DateTime? @default(now()) @map("updated_at")
+  updatedAt    DateTime? @default(now()) @updatedAt @map("updated_at")
 
   @@index([ownerId])
 }
@@ -74,7 +74,7 @@ model Jobdesk {
   experiences_id Int
   description    String
   createdAt      DateTime?   @default(now()) @map("created_at")
-  updatedAt      DateTime?   @default(now()) @map("updated_at")
+  updatedAt      DateTime?   @default(now()) @updatedAt @map("updated_at")
 }
 
 model Users {
@@ -97,7 +97,7 @@ model Users {
   techStacks   TechStack[]
   about        About?
   createdAt    DateTime?     @default(now()) @map("created_at")
-  updatedAt    DateTime?     @default(now()) @map("updated_at")
+  updatedAt    DateTime?     @default(now()) @updatedAt @map("updated_at")
 }
 
 model TechStack {
@@ -108,7 +108,7 @@ model TechStack {
   ownerId     Int?      @map("owner_id")
   owner       Users?    @relation(fields: [ownerId], references: [id], onDelete: SetNull)
   createdAt   DateTime? @default(now()) @map("created_at")
-  updatedAt   DateTime? @default(now()) @map("updated_at")
+  updatedAt   DateTime? @default(now()) @updatedAt @map("updated_at")
 
   @@index([ownerId])
 }
@@ -121,5 +121,5 @@ model About {
   ownerId    Int?      @unique @map("owner_id")
   owner      Users?    @relation(fields: [ownerId], references: [id], onDelete: SetNull)
   createdAt  DateTime? @default(now()) @map("created_at")
-  updatedAt  DateTime? @default(now()) @map("updated_at")
+  updatedAt  DateTime? @default(now()) @updatedAt @map("updated_at")
 }

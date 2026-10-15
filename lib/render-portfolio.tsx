@@ -8,9 +8,10 @@ import TechStack from "@/app/_sections/TechStack";
 import prisma from "@/lib/prisma";
 import type { CertificatesType, ProjectsType } from "@/lib/type";
 import Footer from "@/app/_sections/Footer";
+import { getPortfolioLastUpdated } from "@/lib/portfolio-last-updated";
 
 export async function RenderPortfolio({ ownerId, username }: { ownerId: number | null; username?: string }) {
-  const [profile, about, experiences, projects, techstacks, certificates, educations] = await Promise.all([
+  const [profile, about, experiences, projects, techstacks, certificates, educations, lastUpdated] = await Promise.all([
     ownerId ? prisma.users.findUnique({ where: { id: ownerId }, select: { name: true, photo: true, email: true, phone: true, instagram: true, twitter: true, linkedin: true, github: true } }) : Promise.resolve(null),
     prisma.about.findFirst({ where: { ownerId }, orderBy: { id: "asc" } }),
     prisma.experiences.findMany({ where: { ownerId }, orderBy: { id: "desc" }, include: { jobdesks: { select: { description: true } } } }),
@@ -18,6 +19,7 @@ export async function RenderPortfolio({ ownerId, username }: { ownerId: number |
     prisma.techStack.findMany({ where: { ownerId }, orderBy: { name: "asc" } }),
     prisma.certificates.findMany({ where: { ownerId, status: "published" }, orderBy: { status: "desc" } }),
     prisma.educations.findMany({ where: { ownerId }, orderBy: { id: "desc" } }),
+    getPortfolioLastUpdated(ownerId),
   ]);
 
   return <>
@@ -28,6 +30,6 @@ export async function RenderPortfolio({ ownerId, username }: { ownerId: number |
     <TechStack data={techstacks.map((tool) => ({ ...tool, id: String(tool.id), image: tool.image || undefined, description: tool.description || "", createdAt: tool.createdAt?.toISOString() || "", updatedAt: tool.updatedAt?.toISOString() || "" }))} />
     <Certificates data={certificates.map((certificate) => ({ ...certificate, id: String(certificate.id), desc: certificate.desc || "", site: certificate.site || "", photo: certificate.photo || "", status: certificate.status === "published" ? "published" : "archived", createdAt: certificate.createdAt?.toISOString() || "", updatedAt: certificate.updatedAt?.toISOString() || "" } as CertificatesType))} />
     <Education data={educations} />
-    <div className="sm:w-full sm:mx-0 mx-5"><Footer name={profile?.name || "Sayid"} instagram={profile?.instagram || undefined} twitter={profile?.twitter || undefined} /></div>
+    <div className="sm:w-full sm:mx-0 mx-5"><Footer name={profile?.name || "Sayid"} instagram={profile?.instagram || undefined} twitter={profile?.twitter || undefined} lastUpdated={lastUpdated} /></div>
   </>;
 }

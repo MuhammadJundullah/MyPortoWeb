@@ -319,6 +319,7 @@ export async function DELETE(request: NextRequest) {
       await prisma.jobdesk.delete({
         where: { id: jobdeskIdNum },
       });
+      await prisma.users.update({ where: { id: ownerId }, data: { updatedAt: new Date() } });
 
       return apiResponse(
         true,
@@ -355,6 +356,7 @@ export async function DELETE(request: NextRequest) {
       await prisma.experiences.delete({
         where: { id: experienceIdNum },
       });
+      await prisma.users.update({ where: { id: ownerId }, data: { updatedAt: new Date() } });
 
       return apiResponse(
         true,

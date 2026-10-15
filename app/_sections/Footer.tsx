@@ -1,14 +1,18 @@
 import React from 'react'
 import Link from "next/link";
 
-const Footer = ({ name = "Sayid", instagram, twitter }: { name?: string; instagram?: string; twitter?: string }) => {
+const Footer = ({ name = "Sayid", instagram, twitter, lastUpdated, showLinks = true }: { name?: string; instagram?: string; twitter?: string; lastUpdated: Date | null; showLinks?: boolean }) => {
+  const formattedLastUpdated = lastUpdated
+    ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "Asia/Jakarta" }).format(lastUpdated)
+    : "—";
+
   return (
     <section id="Footer">
       <footer>
         <div className="flex justify-between items-center md:mx-auto mx-5 max-w-6xl sm:space-y-3 sm:py-5 py-3 border-t">
           <div>
             <p className="sm:text-sm text-xs text-gray-400 dark:text-white py-2">
-              Last updated on Oct 8, 2026
+              Last updated on {formattedLastUpdated}
             </p>
             <div>
               <p className="sm:text-xl text-xs text-gray-900 dark:text-white">
@@ -16,7 +20,7 @@ const Footer = ({ name = "Sayid", instagram, twitter }: { name?: string; instagr
               </p>
             </div>
           </div>
-          <ul className="flex justify-start gap-6 sm:justify-end dark:text-white text-gray-900">
+          {showLinks && <ul className="flex justify-start gap-6 sm:justify-end dark:text-white text-gray-900">
             <li><Link href="/register" className="text-sm hidden sm:block underline transition hover:opacity-75">Buat portofolio</Link></li>
             <li><Link href="/login" className="text-sm underline transition hover:opacity-75">Masuk</Link></li>
             {instagram && <li>
@@ -58,7 +62,7 @@ const Footer = ({ name = "Sayid", instagram, twitter }: { name?: string; instagr
                 </svg>
               </a>
             </li>}
-          </ul>
+          </ul>}
         </div>
       </footer>
     </section>

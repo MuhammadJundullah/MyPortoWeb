@@ -173,6 +173,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const deletedCertificate = await prisma.certificates.delete({ where: { id: certificateId } });
+    await prisma.users.update({ where: { id: ownerId }, data: { updatedAt: new Date() } });
 
     return apiResponse(
       true,

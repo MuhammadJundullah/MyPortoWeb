@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
     }
     if (!imageUrl) return handleError(null, "Logo pendidikan wajib diunggah.", 400);
     const education = await prisma.educations.create({ data: { ...input.data, name: imageUrl, ownerId } });
+    await prisma.users.update({ where: { id: ownerId }, data: { updatedAt: new Date() } });
     return apiResponse(true, education, "Education created.", 201);
   } catch (error) { return handleError(error, "Failed creating education"); }
 }
@@ -55,6 +56,7 @@ export async function PUT(req: NextRequest) {
       imageUrl = uploaded;
     }
     const education = await prisma.educations.update({ where: { id }, data: { ...input.data, name: imageUrl } });
+    await prisma.users.update({ where: { id: ownerId }, data: { updatedAt: new Date() } });
     return apiResponse(true, education, "Education updated.", 200);
   } catch (error) { return handleError(error, "Failed updating education"); }
 }
@@ -68,6 +70,7 @@ export async function DELETE(req: NextRequest) {
     const existing = await prisma.educations.findFirst({ where: { id, ownerId } });
     if (!existing) return handleError(null, "Education not found.", 404);
     await prisma.educations.delete({ where: { id } });
+    await prisma.users.update({ where: { id: ownerId }, data: { updatedAt: new Date() } });
     return apiResponse(true, null, "Education deleted.", 200);
   } catch (error) { return handleError(error, "Failed deleting education"); }
 }

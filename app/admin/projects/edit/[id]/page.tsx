@@ -149,7 +149,7 @@ export default function EditProject({
   ];
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col justify-center px-4 py-6 text-black sm:px-6">
+    <div className="mx-auto flex w-full max-w-6xl flex-col justify-center px-4 py-6 text-black sm:px-6">
       <div>
         <BackButton href="/admin/projects" />
       </div>

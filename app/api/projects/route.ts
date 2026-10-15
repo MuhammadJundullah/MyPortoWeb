@@ -274,6 +274,7 @@ export async function DELETE(req: NextRequest) {
     await prisma.projects.delete({
       where: { id: projectToDelete.id },
     });
+    await prisma.users.update({ where: { id: ownerId }, data: { updatedAt: new Date() } });
 
     return apiResponse(true, null, "Project deleted successfully.", 200);
   } catch (error) {

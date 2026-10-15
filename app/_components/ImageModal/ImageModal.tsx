@@ -67,7 +67,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
     setTimeout(onClose, 300);
   };
 
-  const modalOverlayClass = `fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-filter backdrop-blur-md transition-opacity duration-300 ease-in-out ${
+  const modalOverlayClass = `fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 backdrop-filter backdrop-blur-md transition-opacity duration-300 ease-in-out ${
     isModalVisible ? "opacity-100" : "opacity-0"
   }`;
 
@@ -108,12 +108,12 @@ const ImageModal: React.FC<ImageModalProps> = ({
       {" "}
       <div
         ref={modalRef}
-        className={`relative bg-gray-900 rounded-lg shadow-2xl p-4 transition-all duration-300 ease-in-out ${
+        className={`relative my-auto shrink-0 overflow-y-auto bg-gray-900 rounded-lg shadow-2xl p-4 transition-all duration-300 ease-in-out ${
           isModalVisible ? "scale-100" : "scale-90"
         }`}
         style={{
           width: displayWidth,
-          height: displayHeight,
+          height: "auto",
           maxWidth: "90vw",
           maxHeight: "90vh",
         }}

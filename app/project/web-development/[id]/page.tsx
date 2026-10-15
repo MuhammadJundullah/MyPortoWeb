@@ -5,6 +5,9 @@ import Image from "next/image";
 import { FaArrowLeft } from "react-icons/fa";
 import { ProjectsType } from "@/lib/type";
 import { notFound } from "next/navigation";
+import prisma from "@/lib/prisma";
+import Footer from "@/app/_sections/Footer";
+import { getPortfolioLastUpdated } from "@/lib/portfolio-last-updated";
 
 export default async function Page({ params, searchParams }: {
   params: Promise<{ id: string }>; searchParams: Promise<{ username?: string }>;
@@ -13,6 +16,13 @@ export default async function Page({ params, searchParams }: {
   const { username } = await searchParams;
 
   const res = await fetchDataFromAPI(id, username);
+  const profile = username
+    ? await prisma.users.findUnique({
+        where: { username: username.toLowerCase() },
+        select: { id: true, name: true, instagram: true, twitter: true },
+      })
+    : null;
+  const lastUpdated = await getPortfolioLastUpdated(profile?.id ?? null);
   const data: ProjectsType[] = res.data;
 
   if (
@@ -29,8 +39,9 @@ export default async function Page({ params, searchParams }: {
   const item = data[0];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 sm:rounded-xl sm:my-10">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <>
+    <div className="min-h-screen  sm:my-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 sm:rounded-xl">
         {/* Navigation */}
         <div className="mb-8">
           <Link
@@ -107,6 +118,15 @@ export default async function Page({ params, searchParams }: {
         </div>
       </div>
     </div>
+    <div className="sm:w-full sm:mx-0 mx-5">
+      <Footer
+        name={profile?.name || "Sayid"}
+        instagram={profile?.instagram || undefined}
+        twitter={profile?.twitter || undefined}
+        lastUpdated={lastUpdated}
+      />
+    </div>
+    </>
   );
 }
 

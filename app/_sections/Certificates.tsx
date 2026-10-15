@@ -43,10 +43,12 @@ export default function CertificatesComponent({ data }: CertificatesProps) {
           </span>
           <span className="h-px flex-1 bg-gray-300 "></span>
         </span>
-        <div className="my-20">
+        <div className="sm:my-20 mx-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {certificates.length === 0 ? (
-              <p className="text-gray-500 dark:text-gray-300">No certificates to display yet.</p>
+              <p className="col-span-full text-center text-gray-500 dark:text-gray-300">
+                No certificates to display yet.
+              </p>
             ) : (
               certificates.map((certificate, i) => {
                 const animationDistance = 50;

@@ -21,7 +21,7 @@ export default function Educations({ data }: EducationsProps) {
           </span>
           <span className="h-px flex-1 bg-gray-300"></span>
         </span>
-        <div className="my-12 w-full max-w-4xl">
+        <div className="my-12 mx-auto w-full max-w-4xl">
           {educations.length === 0 ? (
             <p className="text-gray-500 dark:text-gray-300 text-center">No education history to display yet.</p>
           ) : (

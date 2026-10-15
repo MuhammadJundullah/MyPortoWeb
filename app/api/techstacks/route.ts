@@ -124,6 +124,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     await prisma.techStack.delete({ where: { id: newId } });
+    await prisma.users.update({ where: { id: ownerId }, data: { updatedAt: new Date() } });
 
     return apiResponse(true, null, "Delete techstack successfully.", 200);
   } catch (error) {
