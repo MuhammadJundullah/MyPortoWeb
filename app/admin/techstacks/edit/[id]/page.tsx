@@ -121,7 +121,6 @@ export default function EditTechStack({
         setIsLoading(false);
         showToast("Alat dan teknologi berhasil diperbarui.", "success");
       } else {
-        const errorData = await res.json();
         setIsLoading(false);
         showToast("Gagal memperbarui alat dan teknologi.", "error");
       }

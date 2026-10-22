@@ -129,7 +129,6 @@ export default function EditProject({
         setIsLoading(false);
         showToast("Proyek berhasil diperbarui.", "success");
       } else {
-        const errorData = await res.json();
         setIsLoading(false);
         showToast("Gagal memperbarui proyek.", "error");
       }

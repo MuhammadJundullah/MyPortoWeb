@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Loading from "@/app/_components/Loading";
 import StatusDropdown from "../_components/StatusDropdown";
@@ -215,7 +216,7 @@ const ManageProjects = () => {
               <CardContent className="flex-grow">
                 <div className="space-y-4">
                   {typeof project.photo === "string" && project.photo && (
-                    <img src={project.photo} alt={project.judul} className="h-40 w-full rounded-md object-cover" />
+                    <Image src={project.photo} alt={project.judul} width={640} height={256} unoptimized className="h-40 w-full rounded-md object-cover" />
                   )}
                   {project.desc && <p className="line-clamp-3 text-sm">{project.desc.replace(/<[^>]*>/g, " ")}</p>}
                   <div className="flex items-center justify-start gap-3 pb-5">
