@@ -50,8 +50,8 @@ const ManageTechstacks = () => {
         const data = await response.json();
         setTechstacks(data.data);
         setFilteredTechstacks(data.data);
-      } catch (err) {
-        showToast(`${err}`, "success");
+      } catch {
+        showToast("Gagal memuat data alat dan teknologi.", "error");
       } finally {
         setIsLoading(false);
       }
@@ -81,15 +81,22 @@ const ManageTechstacks = () => {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     setIsLoading(true);
-    const response = await fetch("/api/techstacks");
-    const data = await response.json();
-    setTechstacks(data.data);
-    setIsLoading(false);
-    setIsRefreshing(false);
+    try {
+      const response = await fetch("/api/techstacks");
+      if (!response.ok) throw new Error();
+      const data = await response.json();
+      setTechstacks(data.data);
+      setFilteredTechstacks(data.data);
+    } catch {
+      showToast("Gagal memuat ulang data alat dan teknologi.", "error");
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Yakin ingin menghapus tool ini?")) return;
+    if (!confirm("Yakin ingin menghapus alat dan teknologi ini?")) return;
 
     try {
       setIsLoading(true);
@@ -97,14 +104,13 @@ const ManageTechstacks = () => {
         method: "DELETE",
       });
 
-      if (response.ok) {
-        setIsLoading(false);
-        handleRefresh();
-        showToast("Tool berhasil dihapus.", "success");
-      }
-    } catch (err) {
+      if (!response.ok) throw new Error();
+      await handleRefresh();
+      showToast("Alat dan teknologi berhasil dihapus.", "success");
+    } catch {
+      showToast("Gagal menghapus alat dan teknologi.", "error");
+    } finally {
       setIsLoading(false);
-      console.error("Delete error:", err);
     }
   };
 
@@ -122,14 +128,17 @@ const ManageTechstacks = () => {
           tags: ["techstacks"],
         }),
       });
-      setRevalidating(false);
-
+      if (!res.ok) throw new Error();
       const data = await res.json();
       if (data.success) {
-        showToast("Data tools berhasil diperbarui.", "success");
+        showToast("Data alat dan teknologi berhasil diperbarui.", "success");
+      } else {
+        throw new Error();
       }
-    } catch (err) {
-      alert("Failed to revalidate " + err);
+    } catch {
+      showToast("Gagal memperbarui data alat dan teknologi.", "error");
+    } finally {
+      setRevalidating(false);
     }
   };
   

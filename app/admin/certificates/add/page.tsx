@@ -66,7 +66,7 @@ export default function AddCertificate() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!window.confirm("Apakah Anda yakin ingin menambahkan certificate?")) {
+    if (!window.confirm("Apakah Anda yakin ingin menambahkan sertifikat?")) {
       return;
     }
 
@@ -95,7 +95,7 @@ export default function AddCertificate() {
       }
 
       setIsLoading(false);
-      showToast("Certificate has been added successfully!", "success");
+      showToast("Sertifikat berhasil ditambahkan.", "success");
       setCertificate({
         name: "",
         desc: "",
@@ -106,7 +106,7 @@ export default function AddCertificate() {
       });
     } catch {
       setIsLoading(false);
-      showToast("Login failed: Invalid credentials", "error");
+      showToast("Gagal menambahkan sertifikat.", "error");
     }
   };
 

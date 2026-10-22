@@ -75,7 +75,7 @@ export default function AddProject() {
       return;
     }
 
-    if (!window.confirm("Apakah Anda yakin ingin menambahkan project?")) {
+    if (!window.confirm("Apakah Anda yakin ingin menambahkan proyek?")) {
       return;
     }
 
@@ -107,7 +107,7 @@ export default function AddProject() {
       }
 
       setIsLoading(false);
-      showToast("Project has been added successfully!", "success");
+      showToast("Proyek berhasil ditambahkan.", "success");
       setProject({
         judul: "",
         photo: null,
@@ -117,7 +117,7 @@ export default function AddProject() {
       });
     } catch {
       setIsLoading(false);
-      showToast("Login failed: Invalid credentials", "error");
+      showToast("Gagal menambahkan proyek.", "error");
     }
   };
 

@@ -48,7 +48,7 @@ export default function EditWorkExperience() {
   useEffect(() => {
     const fetchExperience = async () => {
       if (!experienceId) {
-        showToast("ID work experience tidak ditemukan", "error");
+        showToast("ID pengalaman kerja tidak ditemukan.", "error");
         router.push("/admin/work-experiences");
         return;
       }
@@ -79,13 +79,12 @@ export default function EditWorkExperience() {
                 : [""]
             );
           } else {
-            showToast("Work experience tidak ditemukan", "error");
+            showToast("Pengalaman kerja tidak ditemukan.", "error");
             router.push("/admin/work-experiences");
           }
         }
-      } catch (error) {
-        console.error("Error fetching experience:", error);
-        showToast("Gagal memuat data work experience", "error");
+      } catch {
+        showToast("Gagal memuat data pengalaman kerja.", "error");
       } finally {
         setIsLoading(false);
       }
@@ -137,12 +136,12 @@ export default function EditWorkExperience() {
     // Validasi jobdesks
     const validJobdesks = jobdesks.filter((jd) => jd.trim() !== "");
     if (validJobdesks.length === 0) {
-      showToast("Minimal harus ada satu jobdesk!", "error");
+      showToast("Minimal harus ada satu uraian pekerjaan.", "error");
       return;
     }
 
     if (
-      !window.confirm("Apakah Anda yakin ingin memperbarui work experience?")
+      !window.confirm("Apakah Anda yakin ingin memperbarui pengalaman kerja?")
     ) {
       return;
     }
@@ -169,24 +168,17 @@ export default function EditWorkExperience() {
 
       const result = await response.json();
 
-      if (!result.success) {
-        throw new Error(result.message || "Gagal memperbarui work experience");
-      }
+      if (!result.success) throw new Error();
 
-      showToast("Work experience berhasil diperbarui!", "success");
+      showToast("Pengalaman kerja berhasil diperbarui.", "success");
 
       // Redirect setelah 1.5 detik
       setTimeout(() => {
         router.push("/admin/work-experiences");
       }, 1500);
-    } catch (error) {
+    } catch {
       setIsSaving(false);
-      showToast(
-        error instanceof Error
-          ? error.message
-          : "Gagal memperbarui work experience",
-        "error"
-      );
+      showToast("Gagal memperbarui pengalaman kerja.", "error");
     }
   };
 

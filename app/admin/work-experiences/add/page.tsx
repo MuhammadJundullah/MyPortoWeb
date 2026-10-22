@@ -69,12 +69,12 @@ export default function AddWorkExperience() {
     // Validasi jobdesks
     const validJobdesks = jobdesks.filter((jd) => jd.trim() !== "");
     if (validJobdesks.length === 0) {
-      showToast("Minimal harus ada satu jobdesk!", "error");
+      showToast("Minimal harus ada satu uraian pekerjaan.", "error");
       return;
     }
 
     if (
-      !window.confirm("Apakah Anda yakin ingin menambahkan work experience?")
+      !window.confirm("Apakah Anda yakin ingin menambahkan pengalaman kerja?")
     ) {
       return;
     }
@@ -100,24 +100,17 @@ export default function AddWorkExperience() {
 
       const result = await response.json();
 
-      if (!result.success) {
-        throw new Error(result.message || "Gagal menambahkan work experience");
-      }
+      if (!result.success) throw new Error();
 
-      showToast("Work experience berhasil ditambahkan!", "success");
+      showToast("Pengalaman kerja berhasil ditambahkan.", "success");
 
       // Redirect setelah 1.5 detik
       setTimeout(() => {
         router.push("/admin/work-experiences");
       }, 1500);
-    } catch (error) {
+    } catch {
       setIsLoading(false);
-      showToast(
-        error instanceof Error
-          ? error.message
-          : "Gagal menambahkan work experience",
-        "error"
-      );
+      showToast("Gagal menambahkan pengalaman kerja.", "error");
     }
   };
 

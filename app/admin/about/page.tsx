@@ -38,7 +38,7 @@ const ManageAbout = () => {
     setIsLoading(true);
     try {
       const response = await fetch("/api/about");
-      if (!response.ok) throw new Error("Gagal memuat data about");
+      if (!response.ok) throw new Error("Gagal memuat data profil.");
       const data = await response.json();
       if (data.data && data.data.length > 0) {
         setAboutData(data.data[0]);
@@ -50,8 +50,8 @@ const ManageAbout = () => {
       } else {
         setAboutData(null);
       }
-    } catch (err) {
-      showToast(`${err}`, "error");
+    } catch {
+      showToast("Gagal memuat data profil.", "error");
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -81,14 +81,17 @@ const ManageAbout = () => {
           tags: ["about"],
         }),
       });
-      setRevalidating(false);
-
+      if (!res.ok) throw new Error();
       const data = await res.json();
       if (data.success) {
-        showToast("Static About Data has been revalidated!", "success");
+        showToast("Data profil berhasil diperbarui.", "success");
+      } else {
+        throw new Error();
       }
-    } catch (err) {
-      showToast(`Failed to revalidate: ${err}`, "error");
+    } catch {
+      showToast("Gagal memperbarui data profil.", "error");
+    } finally {
+      setRevalidating(false);
     }
   };
 
@@ -105,14 +108,14 @@ const ManageAbout = () => {
         body: JSON.stringify(editedAbout),
       });
 
-      if (!response.ok) throw new Error("Failed to update data");
+      if (!response.ok) throw new Error();
 
       const updated = await response.json();
       setAboutData(updated.data);
       setIsEditing(false);
-      showToast("About has been updated successfully!", "success");
-    } catch (err) {
-      showToast(`Update error: ${err}`, "error");
+      showToast("Profil berhasil diperbarui.", "success");
+    } catch {
+      showToast("Gagal memperbarui profil.", "error");
     } finally {
       setIsLoading(false);
     }

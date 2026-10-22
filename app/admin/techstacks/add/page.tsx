@@ -60,7 +60,7 @@ export default function AddTechstack() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!window.confirm("Apakah Anda yakin ingin menambahkan tool ini?")) {
+    if (!window.confirm("Apakah Anda yakin ingin menambahkan alat dan teknologi ini?")) {
       return;
     }
 
@@ -85,14 +85,14 @@ export default function AddTechstack() {
       }
 
       setIsLoading(false);
-      showToast("Tool berhasil ditambahkan.", "success");
+      showToast("Alat dan teknologi berhasil ditambahkan.", "success");
       setTechstack({
         name: "",
         image: null,
       });
     } catch {
       setIsLoading(false);
-      showToast("Gagal menambahkan techstack!", "error");
+      showToast("Gagal menambahkan alat dan teknologi.", "error");
     }
   };
 

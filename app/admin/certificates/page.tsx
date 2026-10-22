@@ -52,8 +52,8 @@ const ManageCertificates = () => {
         const data = await response.json();
         setCertificates(data.data);
         setFilteredCertificates(data.data);
-      } catch (err) {
-        showToast(`${err}`, "success");
+      } catch {
+        showToast("Gagal memuat data sertifikat.", "error");
       } finally {
         setIsLoading(false);
       }
@@ -83,11 +83,18 @@ const ManageCertificates = () => {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     setIsLoading(true);
-    const response = await fetch("/api/certificates");
-    const data = await response.json();
-    setCertificates(data.data);
-    setIsLoading(false);
-    setIsRefreshing(false);
+    try {
+      const response = await fetch("/api/certificates");
+      if (!response.ok) throw new Error();
+      const data = await response.json();
+      setCertificates(data.data);
+      setFilteredCertificates(data.data);
+    } catch {
+      showToast("Gagal memuat ulang data sertifikat.", "error");
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -99,14 +106,13 @@ const ManageCertificates = () => {
         method: "DELETE",
       });
 
-      if (response.ok) {
-        setIsLoading(false);
-        handleRefresh();
-        showToast("Certificates has been deleted successfully!", "success");
-      }
-    } catch (err) {
+      if (!response.ok) throw new Error();
+      await handleRefresh();
+      showToast("Sertifikat berhasil dihapus.", "success");
+    } catch {
+      showToast("Gagal menghapus sertifikat.", "error");
+    } finally {
       setIsLoading(false);
-      console.error("Delete error:", err);
     }
   };
 
@@ -138,10 +144,10 @@ const ManageCertificates = () => {
         )
       );
 
-      showToast(`Certificate has been ${newStatus} successfully!`, "success");
-    } catch (error) {
-      showToast(` ${error}`, "success");
-      handleRefresh();
+      showToast(`Status sertifikat berhasil diubah menjadi ${newStatus === "published" ? "diterbitkan" : "diarsipkan"}.`, "success");
+    } catch {
+      showToast("Gagal memperbarui status sertifikat.", "error");
+      await handleRefresh();
     }
   };
 
@@ -159,14 +165,17 @@ const ManageCertificates = () => {
           tags: ["certificates"],
         }),
       });
-      setRevalidating(false);
-
+      if (!res.ok) throw new Error();
       const data = await res.json();
       if (data.success) {
-        showToast("Static Certificate Data has been revalidating!", "success");
+        showToast("Data sertifikat berhasil diperbarui.", "success");
+      } else {
+        throw new Error();
       }
-    } catch (err) {
-      alert("Failed to revalidate " + err);
+    } catch {
+      showToast("Gagal memperbarui data sertifikat.", "error");
+    } finally {
+      setRevalidating(false);
     }
   };
 

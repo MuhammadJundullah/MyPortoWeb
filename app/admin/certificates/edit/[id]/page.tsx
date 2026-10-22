@@ -31,7 +31,7 @@ export default function EditCertificate({ params }: { params: Promise<{ id: stri
         if (!record) throw new Error("Sertifikat tidak ditemukan");
         setCertificate({ ...record, date: new Date(record.date).toISOString().slice(0, 10) });
       })
-      .catch((error) => showToast(error.message, "error"))
+      .catch(() => showToast("Gagal memuat data sertifikat.", "error"))
       .finally(() => setIsLoading(false));
   }, [id, showToast]);
 
@@ -48,10 +48,10 @@ export default function EditCertificate({ params }: { params: Promise<{ id: stri
         const result = await response.json();
         throw new Error(result.message || "Gagal memperbarui sertifikat");
       }
-      showToast("Sertifikat berhasil diperbarui", "success");
+      showToast("Sertifikat berhasil diperbarui.", "success");
       router.push("/admin/certificates");
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : "Gagal memperbarui sertifikat", "error");
+    } catch {
+      showToast("Gagal memperbarui sertifikat.", "error");
     } finally {
       setIsLoading(false);
     }

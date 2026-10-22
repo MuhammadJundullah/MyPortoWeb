@@ -2,7 +2,6 @@
 
 import { useEffect, useState, use } from "react";
 import Loading from "@/app/_components/Loading";
-import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Toast } from "@/app/login/_components/Toast";
@@ -23,7 +22,6 @@ export default function EditProject({
   const [project, setProject] = useState<ProjectsType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = use(params);
-  const router = useRouter();
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -45,14 +43,13 @@ export default function EditProject({
         setIsLoading(true);
         const res = await fetch(`/api/projects?id=${id}`);
 
-        if (!res.ok) throw new Error("Failed to fetch project");
+        if (!res.ok) throw new Error();
 
         const data = await res.json();
 
         setProject(data.data[0]);
-      } catch (error) {
-        console.error("Error fetching project:", error);
-        router.push("/error");
+      } catch {
+        showToast("Gagal memuat data proyek.", "error");
       } finally {
         setIsLoading(false);
       }
@@ -61,18 +58,18 @@ export default function EditProject({
     if (id) {
       fetchProject();
     }
-  }, [id, router]);
+  }, [id, showToast]);
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen mx-10  w-7xl">
+      <div className="flex items-center justify-center h-screen mx-10 w-6xl mx-auto">
         <Loading />
       </div>
     );
   }
 
   if (!project) {
-    return <div className="dark:text-white">Project not found</div>;
+    return <div className="dark:text-white">Proyek tidak ditemukan.</div>;
   }
 
   // handle file (photo) change state
@@ -130,16 +127,15 @@ export default function EditProject({
 
       if (res.ok) {
         setIsLoading(false);
-        showToast("Project has been updated successfully!", "success");
+        showToast("Proyek berhasil diperbarui.", "success");
       } else {
         const errorData = await res.json();
         setIsLoading(false);
-        showToast(errorData.message, "success");
+        showToast("Gagal memperbarui proyek.", "error");
       }
-    } catch (error) {
-      console.error("Error:", error);
+    } catch {
       setIsLoading(false);
-      alert("Terjadi kesalahan saat mengupdate project");
+      showToast("Terjadi kesalahan saat memperbarui proyek.", "error");
     }
   };
 

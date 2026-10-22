@@ -42,11 +42,10 @@ const ManageProjects = () => {
         const response = await fetch("/api/projects");
         if (!response.ok) throw new Error("Gagal memuat data proyek");
         const data = await response.json();
-        console.log(data);
         setProjects(data.data);
         setFilteredProjects(data.data);
-      } catch (err) {
-        showToast(`${err}`, "success");
+      } catch {
+        showToast("Gagal memuat data proyek.", "error");
       } finally {
         setIsLoading(false);
       }
@@ -79,16 +78,23 @@ const ManageProjects = () => {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     setIsLoading(true);
-    const response = await fetch("/api/projects");
-    const data = await response.json();
-    setProjects(data.data);
-    setIsLoading(false);
-    setIsRefreshing(false);
+    try {
+      const response = await fetch("/api/projects");
+      if (!response.ok) throw new Error();
+      const data = await response.json();
+      setProjects(data.data);
+      setFilteredProjects(data.data);
+    } catch {
+      showToast("Gagal memuat ulang data proyek.", "error");
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
   };
 
   // handle delete project
   const handleDelete = async (id: string) => {
-    if (!confirm("Yakin ingin menghapus project ini?")) return;
+    if (!confirm("Yakin ingin menghapus proyek ini?")) return;
 
     try {
       setIsLoading(true);
@@ -96,14 +102,13 @@ const ManageProjects = () => {
         method: "DELETE",
       });
 
-      if (response.ok) {
-        setIsLoading(false);
-        handleRefresh();
-        showToast("Project has been deleted successfully!", "success");
-      }
-    } catch (err) {
+      if (!response.ok) throw new Error();
+      await handleRefresh();
+      showToast("Proyek berhasil dihapus.", "success");
+    } catch {
+      showToast("Gagal menghapus proyek.", "error");
+    } finally {
       setIsLoading(false);
-      console.error("Delete error:", err);
     }
   };
 
@@ -131,10 +136,10 @@ const ManageProjects = () => {
         )
       );
 
-      showToast(`Project has been ${newStatus} successfully!`, "success");
-    } catch (error) {
-      showToast(` ${error}`, "success");
-      handleRefresh();
+      showToast(`Status proyek berhasil diubah menjadi ${newStatus === "published" ? "diterbitkan" : "diarsipkan"}.`, "success");
+    } catch {
+      showToast("Gagal memperbarui status proyek.", "error");
+      await handleRefresh();
     }
   };
 
@@ -152,14 +157,17 @@ const ManageProjects = () => {
           tags: ["projects"],
         }),
       });
-      setRevalidating(false);
-
+      if (!res.ok) throw new Error();
       const data = await res.json();
       if (data.success) {
-        showToast("Static Project Data has been revalidating!", "success");
+        showToast("Data proyek berhasil diperbarui.", "success");
+      } else {
+        throw new Error();
       }
-    } catch (err) {
-      alert("Failed to revalidate " + err);
+    } catch {
+      showToast("Gagal memperbarui data proyek.", "error");
+    } finally {
+      setRevalidating(false);
     }
   };
 

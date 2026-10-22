@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Loading from "@/app/_components/Loading";
-import { SquarePen, Trash2, Briefcase } from "lucide-react";
+import { SquarePen, Delete, Briefcase } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -65,8 +65,8 @@ const ManageWorkExperiences = () => {
           setExperiences(result.data);
           setFilteredExperiences(result.data);
         }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Terjadi kesalahan");
+      } catch {
+        setError("Gagal memuat data pengalaman kerja.");
       } finally {
         setIsLoading(false);
       }
@@ -109,8 +109,8 @@ const ManageWorkExperiences = () => {
         setExperiences(result.data);
         setFilteredExperiences(result.data);
       }
-    } catch (error) {
-      console.error("Refresh error:", error);
+    } catch {
+      showToast("Gagal memuat ulang data pengalaman kerja.", "error");
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -121,7 +121,7 @@ const ManageWorkExperiences = () => {
   const handleDelete = async (experienceId: number) => {
     if (
       !confirm(
-        "Yakin ingin menghapus work experience ini beserta semua jobdesk-nya?"
+        "Yakin ingin menghapus pengalaman kerja ini beserta seluruh uraian pekerjaannya?"
       )
     )
       return;
@@ -137,13 +137,15 @@ const ManageWorkExperiences = () => {
       const result = await response.json();
 
       if (result.success) {
-        handleRefresh();
+        await handleRefresh();
+        showToast("Pengalaman kerja berhasil dihapus.", "success");
       } else {
-        alert(result.message || "Gagal menghapus work experience");
+        throw new Error();
       }
-    } catch (error) {
-      console.error("Delete error:", error);
-      alert("Terjadi kesalahan saat menghapus");
+    } catch {
+      showToast("Gagal menghapus pengalaman kerja.", "error");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -177,14 +179,16 @@ const ManageWorkExperiences = () => {
           tags: ["work-experiences"],
         }),
       });
-      setRevalidating(false);
-
       const data = await res.json();
       if (data.success) {
-        showToast("Static Project Data has been revalidating!", "success");
+        showToast("Data pengalaman kerja berhasil diperbarui.", "success");
+      } else {
+        throw new Error();
       }
-    } catch (err) {
-      alert("Failed to revalidate " + err);
+    } catch {
+      showToast("Gagal memperbarui data pengalaman kerja.", "error");
+    } finally {
+      setRevalidating(false);
     }
   };
 
@@ -256,10 +260,10 @@ const ManageWorkExperiences = () => {
 
               <CardFooter className="flex justify-end gap-2">
                 <Button
-                  variant="ghost"
-                  className="flex items-center gap-2 hover:cursor-pointer text-red-500 hover:text-red-700 hover:bg-red-50"
+                  variant="ghost2"
+                  className="flex items-center gap-2 hover:cursor-pointer text-red-500"
                   onClick={() => handleDelete(exp.experience_id)}>
-                  <Trash2 size={16} />
+                  <Delete size={16} />
                   Hapus
                 </Button>
 

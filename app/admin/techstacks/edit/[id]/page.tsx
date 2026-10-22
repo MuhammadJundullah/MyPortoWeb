@@ -2,7 +2,6 @@
 
 import { useEffect, useState, use } from "react";
 import Loading from "@/app/_components/Loading";
-import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Toast } from "@/app/login/_components/Toast";
@@ -21,7 +20,6 @@ export default function EditTechStack({
   const [techstack, setTechStack] = useState<TechStackType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = use(params);
-  const router = useRouter();
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -50,9 +48,8 @@ export default function EditTechStack({
         const tool = Array.isArray(data.data) ? data.data[0] : data.data;
         if (!tool) throw new Error("Tool tidak ditemukan.");
         setTechStack(tool);
-      } catch (error) {
-        console.error("Error fetching techstack:", error);
-        router.push("/error");
+      } catch {
+        showToast("Gagal memuat data alat dan teknologi.", "error");
       } finally {
         setIsLoading(false);
       }
@@ -61,7 +58,7 @@ export default function EditTechStack({
     if (id) {
       fetchTechStack();
     }
-  }, [id, router]);
+  }, [id, showToast]);
 
   if (isLoading) {
     return (
@@ -122,16 +119,15 @@ export default function EditTechStack({
 
       if (res.ok) {
         setIsLoading(false);
-        showToast("Tool berhasil diperbarui.", "success");
+        showToast("Alat dan teknologi berhasil diperbarui.", "success");
       } else {
         const errorData = await res.json();
         setIsLoading(false);
-        showToast(errorData.message, "success");
+        showToast("Gagal memperbarui alat dan teknologi.", "error");
       }
-    } catch (error) {
-      console.error("Error:", error);
+    } catch {
       setIsLoading(false);
-      showToast("Terjadi kesalahan saat memperbarui tool.", "error");
+      showToast("Terjadi kesalahan saat memperbarui alat dan teknologi.", "error");
     }
   };
 
